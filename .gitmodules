@@ -7,3 +7,6 @@
 [submodule "lib/axelar-gmp-sdk-solidity"]
 	path = lib/axelar-gmp-sdk-solidity
 	url = https://github.com/axelarnetwork/axelar-gmp-sdk-solidity
+[submodule "lib/axelar-local-dev"]
+	path = lib/axelar-local-dev
+	url = https://github.com/axelarnetwork/axelar-local-dev
