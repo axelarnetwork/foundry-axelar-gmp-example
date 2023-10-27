@@ -1,1 +1,2 @@
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
+@axelar-gmp-sdk-solidity/contracts/=lib/axelar-gmp-sdk-solidity/contracts/

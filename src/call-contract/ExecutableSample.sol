@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import { AxelarExecutable } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol';
-import { IAxelarGateway } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol';
-import { IAxelarGasService } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol';
-import { IERC20 } from '@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol';
+import {AxelarExecutable} from "@axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
+import {IAxelarGateway} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
+import {IAxelarGasService} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
+import {IERC20} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol";
 
 contract ExecutableSample is AxelarExecutable {
     string public value;
@@ -22,25 +22,20 @@ contract ExecutableSample is AxelarExecutable {
         string calldata destinationAddress,
         string calldata value_
     ) external payable {
-        require(msg.value > 0, 'Gas payment is required');
+        require(msg.value > 0, "Gas payment is required");
 
         bytes memory payload = abi.encode(value_);
-        gasService.payNativeGasForContractCall{ value: msg.value }(
-            address(this),
-            destinationChain,
-            destinationAddress,
-            payload,
-            msg.sender
+        gasService.payNativeGasForContractCall{value: msg.value}(
+            address(this), destinationChain, destinationAddress, payload, msg.sender
         );
         gateway.callContract(destinationChain, destinationAddress, payload);
     }
 
     // Handles calls created by setAndSend. Updates this contract's value
-    function _execute(
-        string calldata sourceChain_,
-        string calldata sourceAddress_,
-        bytes calldata payload_
-    ) internal override {
+    function _execute(string calldata sourceChain_, string calldata sourceAddress_, bytes calldata payload_)
+        internal
+        override
+    {
         (value) = abi.decode(payload_, (string));
         sourceChain = sourceChain_;
         sourceAddress = sourceAddress_;
