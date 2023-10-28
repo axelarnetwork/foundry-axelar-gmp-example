@@ -13,6 +13,7 @@ const SCRIPT_MAPPINGS = {
   ExecutableSample: "script/ExecutableSample.s.sol:ExecutableSampleScript",
   DistributionExecutable:
     "script/DistributionExecutable.s.sol:DistributionExecutableScript",
+  SendAck: "script/SendAck.s.sol:SendAckScript",
 };
 
 const validateInput = (input, validInputs, errorMessage) => {
