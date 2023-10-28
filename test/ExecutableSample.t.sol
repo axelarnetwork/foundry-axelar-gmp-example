@@ -14,7 +14,15 @@ contract ExecutableSampleTest is Test {
     }
 
     function test_SetRemoteValue() public {
-        executableSample.setRemoteValue{value: 0.5 ether}("destinationChain", "destinationAddress", "value");
+        // hoax(_sender, 0.2 ether);
+
+        executableSample.setRemoteValue{value: 0.2 ether}(
+            "Avalanche", "0xA0d9384110f62d28103F6F9397eC8C0a5f152177", "Fermin"
+        );
+
+        //make assertions after acting
+        assertEq(executableSample.value(), "Fermin");
+
         // assertEq(executableSample.value(), "value");
         // assertEq(executableSample.sourceChain(), "destinationChain");
         // assertEq(executableSample.sourceAddress(), "destinationAddress");

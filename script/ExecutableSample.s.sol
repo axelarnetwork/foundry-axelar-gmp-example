@@ -1,14 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {Script} from "forge-std/Script.sol";
+import "forge-std/Script.sol";
 import "forge-std/console.sol";
+import "../src/call-contract/ExecutableSample.sol";
+import "./NetworkDetailsBase.sol";
 
-
-contract ExecutableSample is Script {
-    function setUp() public {}
+contract ExecutableSampleScript is Script, NetworkDetailsBase {
+    ExecutableSample public executableSample;
 
     function run() public {
-        vm.broadcast();
+        uint256 privateKey = vm.envUint("PRIVATE_KEY");
+        string memory network = vm.envString("NETWORK");
+
+        (address gateway, address gasService) = getNetworkDetails(network);
+
+        vm.startBroadcast(privateKey);
+        executableSample = new ExecutableSample(gateway, gasService);
+        vm.stopBroadcast();
     }
 }
