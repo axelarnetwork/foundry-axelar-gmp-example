@@ -11,8 +11,9 @@
   "scripts": {
     "setup": "node ./utils/setupEnv.js",
     "build": "forge build",
+    "format": "forge fmt",
     "deploy": "node ./utils/deploy.js",
-    "test": "forge test"
+    "test": "forge test -vvv"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.5.0",
