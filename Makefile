@@ -3,7 +3,7 @@
 export
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc
+.PHONY: setup-env build deploy format test clean rpc help all install update
 
 # Supported networks and scripts
 NETWORKS = polygon avalanche binance scroll_sepolia base
@@ -21,6 +21,8 @@ help:
 	@echo "rpc                    - Display the RPC URLs for all supported networks."
 	@echo "help                   - Display this help message."
 
+all: clean setup-env install update build
+
 setup-env:
 	@if [ ! -f .env ]; then \
 		echo "\033[0;33m⤵ Reading .env.example.\033[0m"; \
@@ -30,6 +32,12 @@ setup-env:
 	else \
 		echo "\033[0;34mA .env file already exists, not modifying it.\033[0m"; \
 	fi
+
+# Install Dependencies
+install:; forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.5.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit
+
+# Update Dependencies
+update:; forge update
 
 # Build target
 build:

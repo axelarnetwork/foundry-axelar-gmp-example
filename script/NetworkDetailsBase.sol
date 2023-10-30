@@ -15,7 +15,7 @@ contract NetworkDetailsBase is Script {
         if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("binance"))) {
             return (vm.envAddress("BINANCE_GATEWAY"), vm.envAddress("BINANCE_GAS_SERVICE"));
         }
-        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("scroll"))) {
+        if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("scroll_sepolia"))) {
             return (vm.envAddress("SCROLL_SEPOLIA_GATEWAY"), vm.envAddress("SCROLL_SEPOLIA_GAS_SERVICE"));
         }
         if (keccak256(abi.encodePacked(network)) == keccak256(abi.encodePacked("base"))) {
