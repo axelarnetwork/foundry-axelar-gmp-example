@@ -15,7 +15,7 @@ contract ExecutableSample is AxelarExecutable {
     constructor(address gateway_, address gasReceiver_) AxelarExecutable(gateway_) {
         gasService = IAxelarGasService(gasReceiver_);
     }
-    
+
     // Call this function to update the value of this contract along with all its siblings'.
     function setRemoteValue(
         string calldata destinationChain,
