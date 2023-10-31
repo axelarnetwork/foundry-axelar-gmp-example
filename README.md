@@ -1,66 +1,69 @@
-## Foundry
+# Foundry Axelar GMP Example
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This repository showcases an example of integrating with the Axelar GMP using the Foundry framework. The Foundry framework aids in deploying, testing, and interacting with smart contracts on various blockchains. This example provides a hands-on approach to demonstrate the potential and flexibility of such integrations.
 
-Foundry consists of:
+In this example, the supported testnet networks are `polygon, avalanche, binance, scroll_sepolia, base.` Feel free to add your based on your needs.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+# Getting Started
 
-## Documentation
+## Requirements
 
-https://book.getfoundry.sh/
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git): Confirm installation by running `git --version`, and you should see a response like `git version x.x.x`
+- [Foundry](https://getfoundry.sh/): Confirm installation by running `forge --version` and you should see a response like `forge 0.2.0 (a839414 2023-10-26T09:23:16.997527000Z)`
 
-## Usage
+## Installation
 
-### Build
+1. Clone the repository:
 
-```shell
-$ forge build
+```bash
+git clone https://github.com/Olanetsoft/foundry-axelar-gmp-example.git
 ```
 
-### Test
+2. Navigate into the project directory:
 
-```shell
-$ forge test
+```bash
+cd foundry-axelar-gmp-example
 ```
 
-### Format
+3. Install the dependencies:
 
-```shell
-$ forge fmt
+```bash
+make all
+```
+The command above will install the required dependencies, create a `.env` file from `.env.example`, and update and build the project.
+
+4. Update the PRIVATE_KEY variable with your private key
+
+```bash
+PRIVATE_KEY=<your-private-key-here>
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
+5. Update the .env file that was created with the preferred testnet network RPC you want to work with.
+6. 
+```bash
+POLYGON_TESTNET_RPC_URL=
+AVALANCHE_TESTNET_RPC_URL=
+BINANCE_TESTNET_RPC_URL=
+SCROLL_SEPOLIA_TESTNET_RPC_URL=
+BASE_TESTNET_RPC_URL=
 ```
 
-### Anvil
+# Usage
 
-```shell
-$ anvil
+The repository provides a set of Makefile commands to facilitate common tasks:
+
+- `make build` : Compile the contracts.
+- `make deploy` : Deploy a specific contract to a given network.
+- `make format` : Format the codebase using the Foundry formatter.
+- `make test` : Run tests with increased verbosity.
+- `make clean` : Clean any generated artifacts.
+- `make rpc` : Display RPC URLs for various networks.
+
+# Deployment to testnet
+To deploy to any of your preferred test network support in this project, you can run the command `make deploy NETWORK=network SCRIPT=script`. e.g.:
+
+```bash
+make deploy NETWORK=polygon SCRIPT=ExecutableSample
 ```
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+The command above will deploy to the Polygon Mumbai testnet successfully.
