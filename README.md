@@ -59,14 +59,19 @@ BASE_TESTNET_RPC_URL=
 
 # Usage
 
-The repository provides a set of `[Makefile](https://opensource.com/article/18/8/what-how-makefile)` commands to facilitate common tasks:
+The repository provides a set of [Makefile](https://opensource.com/article/18/8/what-how-makefile) commands to facilitate common tasks:
 
+- `make all` : Install dependencies, build, and update the project.
+- `make setup-env` : Create a `.env` file from `.env.example`.
+- `make install` : Install the dependencies.
 - `make build` : Compile the contracts.
+- `make update` : Update the project.
 - `make deploy` : Deploy a specific contract to a given network.
 - `make format` : Format the codebase using the Foundry formatter.
 - `make test` : Run tests with increased verbosity.
 - `make clean` : Clean any generated artifacts.
 - `make rpc` : Display RPC URLs for various networks.
+- `make help` : Display the help menu.
 
 # Deployment to testnet
 To deploy to any of your preferred test network support in this project, you can run the command `make deploy NETWORK=network SCRIPT=script`. The `SCRIPT` parameter specifies which smart contract or script you wish to deploy to the blockchain network. Think of it as the "what" you're deploying, whereas the `NETWORK` parameter is the "where" you're deploying to.
