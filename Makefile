@@ -21,7 +21,7 @@ help:
 	@echo "rpc                    - Display the RPC URLs for all supported networks."
 	@echo "help                   - Display this help message."
 
-all: clean setup-env update build
+all: clean setup-env build
 
 setup-env:
 	@if [ ! -f .env ]; then \
