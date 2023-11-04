@@ -3,7 +3,7 @@
 export
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc help all install update
+.PHONY: setup-env build deploy format test clean rpc help all install update 
 
 # Supported networks and scripts
 NETWORKS = polygon avalanche binance scroll_sepolia base
@@ -13,17 +13,17 @@ SCRIPTS = ExecutableSample DistributionExecutable SendAck
 help:
 	@echo "\033[0;32mAvailable targets:\033[0m"
 	@echo "setup-env              - Set up the environment by creating a .env file from .env.example."
-	@echo "build                  - Build using the forge tool."
+	@echo "build                  - Build using the forge tool." 
 	@echo "deploy                 - Deploy the specified script to the specified network."
 	@echo "format                 - Format using the forge tool."
 	@echo "test                   - Run tests using the forge tool."
 	@echo "clean                  - Clean using the forge tool."
-	@echo "rpc                    - Display the RPC URLs for all supported networks."
+	@echo "rpc                    - Display the RPC URLs for all supported networks." 
 	@echo "help                   - Display this help message."
 
 all: clean setup-env build
 
-setup-env:
+setup-env: 
 	@if [ ! -f .env ]; then \
 		echo "\033[0;33m⤵ Reading .env.example.\033[0m"; \
 		cp .env.example .env; \
@@ -34,12 +34,14 @@ setup-env:
 	fi
 
 # Install Dependencies
-install:; forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.5.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit
+install:
+	forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.5.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit
 
 # Update Dependencies
-update:; forge update
-
-# Build target
+update:
+	forge update
+   
+# Build target   
 build:
 	@forge build
 
@@ -73,21 +75,96 @@ endif
 	@echo "Script executed successfully!"
 
 # Format target
-format:
+format: 
 	@forge fmt
-
-# Test target
+   
+# Test target   
 test:
 	@forge test -vvv
-
+  
 # Clean target
 clean:
 	@:; forge clean
 
-# Display RPC URLs
+# Display RPC URLs 
 rpc:
 	@echo "\033[0;32mPolygon RPC URL:\033[0m" $(POLYGON_TESTNET_RPC_URL)     
-	@echo "\033[0;34mAvalanche RPC URL:\033[0m" $(AVALANCHE_TESTNET_RPC_URL) 
+	@echo "\033[0;34mAvalanche RPC URL:\033[0m" $(AVALANCHE_TESTNET_RPC_URL)
 	@echo "\033[0;35mBinance RPC URL:\033[0m" $(BINANCE_TESTNET_RPC_URL)     
 	@echo "\033[0;36mScroll RPC URL:\033[0m" $(SCROLL_SEPOLIA_TESTNET_RPC_URL)       
-	@echo "\033[0;33mBase RPC URL:\033[0m" $(BASE_TESTNET_RPC_URL)          
+	@echo "\033[0;33mBase RPC URL:\033[0m" $(BASE_TESTNET_RPC_URL)
+           
+# Execute the command manually after asking for user input
+execute:
+	@echo "Please enter the details:"; \
+	read -p "Contract Name (e.g., ExecutableSample, DistributionExecutable, SendAck): " contract_name; \
+	read -p "Network (e.g., polygon, avalanche, binance, scroll_sepolia, base): " network; \
+	read -p "Source chain contract address: " src_address; \
+	read -p "Destination chain (e.g., Polygon, Avalanche, binance, scroll, base): " dest_chain; \
+	read -p "Destination chain contract address: " dest_address; \
+	read -p "Message to send: " message; \
+	read -p "Value to send in ether (e.g., 0.5 for half an ether): " value_in_ether; \
+	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
+	if [ -z "$$value_in_wei" ]; then \
+		echo "\033[31mFailed to convert value to wei. Please enter a valid numeric value.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$network" ]; then \
+		echo "\033[31mNetwork not provided. Please enter a valid network.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$src_address" ]; then \
+		echo "\033[31mSource contract address not provided. Please enter a valid address.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$dest_chain" ]; then \
+		echo "\033[31mDestination chain not provided. Please enter a valid destination chain.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$dest_address" ]; then \
+		echo "\033[31mDestination contract address not provided. Please enter a valid address.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$message" ]; then \
+		echo "\033[31mMessage not provided. Please enter a valid message to send.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$value_in_ether" ]; then \
+		echo "\033[31mValue in ether not provided. Please enter a valid amount.\033[0m"; \
+		exit 1; \
+	fi; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var=$${network_upper}_TESTNET_RPC_URL; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "\033[31mRPC URL for $$network is not set in .env. Please set the RPC URL for your network.\033[0m"; \
+		exit 1; \
+	fi; \
+	if [ "$$contract_name" = "DistributionExecutable" ]; then \
+		read -p "Destination addresses (comma-separated): " dest_addresses; \
+		read -p "Token symbol to send: " symbol; \
+		read -p "Amount to send: " amount; \
+		IFS=',' read -ra ADDR <<< "$$dest_addresses"; \
+		dest_addr_array=""; \
+		for i in "$${ADDR[@]}"; do \
+			dest_addr_array+="\"$$i\" "; \
+		done; \
+		echo "\033[32mExecuting transaction for DistributionExecutable...\033[0m"; \
+		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$${dest_addr_array[@]}" $$symbol $$amount --rpc-url $$rpc_url --private-key $$PRIVATE_KEY --value $$value_in_wei || \
+		echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
+	else \
+		echo "\033[32mExecuting transaction for $$contract_name...\033[0m"; \
+		method_name=""; \
+		if [ "$$contract_name" = "SendAck" ]; then \
+			method_name="sendMessage(string,string,string)"; \
+		elif [ "$$contract_name" = "ExecutableSample" ]; then \
+			method_name="setRemoteValue(string,string,string)"; \
+		fi; \
+		if [ -n "$$method_name" ]; then \
+			cast send $$src_address "$$method_name" $$dest_chain $$dest_address $$message --rpc-url $$rpc_url --private-key $$PRIVATE_KEY --value $$value_in_wei || \
+			echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
+		else \
+			echo "\033[31mInvalid contract name. Please enter a valid contract name.\033[0m"; \
+			exit 1; \
+		fi; \
+	fi

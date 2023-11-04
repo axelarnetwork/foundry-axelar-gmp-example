@@ -16,8 +16,20 @@ Note: Additional networks can be added based on your specific needs.
 
 ## Requirements
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git): Confirm installation by running `git --version`, and you should see a response like `git version x.x.x`
-- [Foundry](https://getfoundry.sh/): Confirm installation by running `forge --version` and you should see a response like `forge 0.2.0 (a839414 2023-10-26T09:23:16.997527000Z)`
+- [Foundry](https://getfoundry.sh/): Confirm installation by running `forge --version` and you should see a response like 
+```bash
+forge 0.2.0 (a839414 2023-10-26T09:23:16.997527000Z)
+```
+- [Make](https://www.gnu.org/software/make/): Confirm installation by running `make --version` and you should see a response like 
+```bash
+GNU Make 3.81
+Copyright (C) 2006  Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+This program built for i386-apple-darwin11.3.0
+```
 
 ## Installation
 
@@ -74,12 +86,21 @@ The repository provides a set of [Makefile](https://opensource.com/article/18/8/
 - `make help` : Display the help menu.
 
 # Deployment to testnet
-To deploy to any of your preferred test network support in this project, you can run the command `make deploy NETWORK=network SCRIPT=script`. The `SCRIPT` parameter specifies which smart contract or script you wish to deploy to the blockchain network. Think of it as the "what" you're deploying, whereas the `NETWORK` parameter is the "where" you're deploying to.
+To deploy to any of your preferred test networks this project supports, ensure you have tokens from a faucet for the respective network. You can acquire faucet tokens for the Polygon Mumbai testnet here, for Avalanche here, and for Scroll Sepolia here. For Binance, faucet tokens can be obtained on their Discord server, and for Base, use this link. Make sure that these tokens are in the account linked to the private key you have provided in your .env file.
+
+
+Next, run the following command. 
+
+```bash
+make deploy NETWORK=network SCRIPT=script
+``` 
+The `SCRIPT` parameter specifies which smart contract or script you wish to deploy to the blockchain network. Think of it as the "what" you're deploying, whereas the `NETWORK` parameter is the "where" you're deploying to.
 
 Example:
 
 ```bash
 make deploy NETWORK=polygon SCRIPT=ExecutableSample
 ```
-
 The above command deploys the `ExecutableSample` contract to the Polygon Mumbai testnet. This script can also be used to target other contracts within the project.
+
+# Deploying and testing send message functionality using Axelar GMP 
