@@ -3,7 +3,7 @@
 export
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc help all install update 
+.PHONY: setup-env build deploy format test clean rpc help all install update execute
 
 # Supported networks and scripts
 NETWORKS = polygon avalanche binance scroll_sepolia base
@@ -102,14 +102,13 @@ execute:
 	read -p "Source chain contract address: " src_address; \
 	read -p "Destination chain (e.g., Polygon, Avalanche, binance, scroll, base): " dest_chain; \
 	read -p "Destination chain contract address: " dest_address; \
-	read -p "Message to send: " message; \
 	read -p "Value to send in ether (e.g., 0.5 for half an ether): " value_in_ether; \
 	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
 	if [ -z "$$value_in_wei" ]; then \
 		echo "\033[31mFailed to convert value to wei. Please enter a valid numeric value.\033[0m"; \
 		exit 1; \
 	fi; \
-	if [ -z "$$network" ]; then \
+		if [ -z "$$network" ]; then \
 		echo "\033[31mNetwork not provided. Please enter a valid network.\033[0m"; \
 		exit 1; \
 	fi; \
@@ -125,10 +124,6 @@ execute:
 		echo "\033[31mDestination contract address not provided. Please enter a valid address.\033[0m"; \
 		exit 1; \
 	fi; \
-	if [ -z "$$message" ]; then \
-		echo "\033[31mMessage not provided. Please enter a valid message to send.\033[0m"; \
-		exit 1; \
-	fi; \
 	if [ -z "$$value_in_ether" ]; then \
 		echo "\033[31mValue in ether not provided. Please enter a valid amount.\033[0m"; \
 		exit 1; \
@@ -141,18 +136,24 @@ execute:
 		exit 1; \
 	fi; \
 	if [ "$$contract_name" = "DistributionExecutable" ]; then \
-		read -p "Destination addresses (comma-separated): " dest_addresses; \
-		read -p "Token symbol to send: " symbol; \
+		read -p "Destination addresses (comma-separated, e.g. 0x123,0x123): " dest_addresses; \
+		read -p "Token symbol to send (e.g. aUSDC): " symbol; \
+		read -p "Approved amount to spend: " approved_amount; \
+		approved_amount_in_mwei=$$(echo "scale=0; $$approved_amount*10^6/1" | bc); \
 		read -p "Amount to send: " amount; \
-		IFS=',' read -ra ADDR <<< "$$dest_addresses"; \
-		dest_addr_array=""; \
-		for i in "$${ADDR[@]}"; do \
-			dest_addr_array+="\"$$i\" "; \
-		done; \
+		amount_in_mwei=$$(echo "scale=0; $$amount*10^6/1" | bc); \
+		dest_addrs_array="[$$(echo $$dest_addresses | sed 's/,/, /g')]"; \
 		echo "\033[32mExecuting transaction for DistributionExecutable...\033[0m"; \
-		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$${dest_addr_array[@]}" $$symbol $$amount --rpc-url $$rpc_url --private-key $$PRIVATE_KEY --value $$value_in_wei || \
+		cast send 0x2c852e740B62308c46DD29B982FBb650D063Bd07 "approve(address,uint256)" $$src_address $$approved_amount_in_mwei --rpc-url $$rpc_url --private-key $$PRIVATE_KEY && \
+		echo "\033[32mApproval transaction complete, now executing sendToMany...\033[0m"; \
+		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$$dest_addrs_array" $$symbol $$amount_in_mwei --rpc-url $$rpc_url --private-key $$PRIVATE_KEY --value $$value_in_wei || \
 		echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
 	else \
+		read -p "Message to send: " message; \
+		if [ -z "$$message" ]; then \
+			echo "\033[31mMessage not provided. Please enter a valid message to send.\033[0m"; \
+			exit 1; \
+		fi; \
 		echo "\033[32mExecuting transaction for $$contract_name...\033[0m"; \
 		method_name=""; \
 		if [ "$$contract_name" = "SendAck" ]; then \
