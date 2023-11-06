@@ -13,13 +13,17 @@ SCRIPTS = ExecutableSample DistributionExecutable SendAck
 help:
 	@echo "\033[0;32mAvailable targets:\033[0m"
 	@echo "setup-env              - Set up the environment by creating a .env file from .env.example."
+	@echo "install                - Install dependencies using the forge tool."
 	@echo "build                  - Build using the forge tool." 
+	@echo "update                 - Update dependencies using the forge tool."
 	@echo "deploy                 - Deploy the specified script to the specified network."
+	@echo "execute                - Execute the specified script manually."
 	@echo "format                 - Format using the forge tool."
 	@echo "test                   - Run tests using the forge tool."
 	@echo "clean                  - Clean using the forge tool."
 	@echo "rpc                    - Display the RPC URLs for all supported networks." 
 	@echo "help                   - Display this help message."
+
 
 all: clean setup-env build
 
@@ -102,7 +106,7 @@ execute:
 	read -p "Source chain contract address: " src_address; \
 	read -p "Destination chain (e.g., Polygon, Avalanche, binance, scroll, base): " dest_chain; \
 	read -p "Destination chain contract address: " dest_address; \
-	read -p "Value to send in ether (e.g., 0.5 for half an ether): " value_in_ether; \
+	read -p "Value to send in ether (e.g., 0.5): " value_in_ether; \
 	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
 	if [ -z "$$value_in_wei" ]; then \
 		echo "\033[31mFailed to convert value to wei. Please enter a valid numeric value.\033[0m"; \
