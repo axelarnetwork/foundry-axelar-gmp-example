@@ -36,7 +36,7 @@ This program built for i386-apple-darwin11.3.0
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Olanetsoft/foundry-axelar-gmp-example.git
+git clone https://github.com/axelarnetwork/foundry-axelar-gmp-example.git
 ```
 
 2. Navigate into the project directory:
