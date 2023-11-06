@@ -134,3 +134,6 @@ type                    2
 ```
 
 In the response above, `transactionHash` is what you need to confirm your cross-chain transaction on Axelarscan testnet [here.](https://testnet.axelarscan.io/gmp/0x95d66b84495830b449a39e817f84abf183e333559d57f3c592b15d2dc9c1dd01)
+
+
+Additionally, we have an example using Hardhat available [here.](https://github.com/axelarnetwork/axelar-examples)
