@@ -15,3 +15,8 @@ docs/
 # Dotenv file
 .env
 .DS_Store
+anvil-output.log
+build
+artifacts
+cache
+yarn-error.log
