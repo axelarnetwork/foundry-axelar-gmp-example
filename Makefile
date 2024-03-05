@@ -343,7 +343,6 @@ local-chain-execute:
 	
 	@echo "Reading initial state from destination network ($(TO_UPPER))..."
 	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	@cast call $(DEST_ADDRESS) "food()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
 	
 	@sleep 5
 	
@@ -360,7 +359,6 @@ local-chain-execute:
 	
 	@echo "Reading final state from destination network ($(TO_UPPER))..."
 	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."
-	@cast call $(DEST_ADDRESS) "food()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."
 	
 	@echo "Operation completed successfully!"
 
