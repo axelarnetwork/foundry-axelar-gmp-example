@@ -251,8 +251,7 @@ local-chain-deploy:
 			CONTRACT_ADDRESS=$$(echo "$$OUTPUT" | grep 'Contract Address:' | awk '{print $$3}'); \
 			NETWORK_UPPER=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
 			SCRIPT_UPPER=$$(echo $$script | tr '[:lower:]' '[:upper:]'); \
-			echo "LOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_SUCCESS_HASH=$$SUCCESS_HASH" >> .env; \
-			echo "LOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_CONTRACT_ADDRESS=$$CONTRACT_ADDRESS" >> .env; \
+			printf "\n\nLOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_SUCCESS_HASH=$$SUCCESS_HASH\nLOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_CONTRACT_ADDRESS=$$CONTRACT_ADDRESS\n" >> .env; \
 			echo "$$script deployed successfully to $$network!"; \
 		done; \
 	done
@@ -343,6 +342,8 @@ local-chain-execute:
 	
 	@echo "Reading initial state from destination network ($(TO_UPPER))..."
 	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
+	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
+	@cast call $(DEST_ADDRESS) "sourceAddress()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
 	
 	@sleep 5
 	
@@ -359,6 +360,8 @@ local-chain-execute:
 	
 	@echo "Reading final state from destination network ($(TO_UPPER))..."
 	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."
+	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
+	@cast call $(DEST_ADDRESS) "sourceAddress()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
 	
 	@echo "Operation completed successfully!"
 

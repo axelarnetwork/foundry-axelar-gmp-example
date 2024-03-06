@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Ethereum",
+    "chainId": 31337,
+    "userKeys": [
+      "0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
+      "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+      "0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356",
+      "0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97",
+      "0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
+    ],
+    "ownerKey": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    "operatorKey": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
+    "relayerKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
+    "adminKeys": [
+      "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+    ],
+    "threshold": 1,
+    "lastRelayedBlock": 0,
+    "lastExpressedBlock": 0,
+    "gatewayAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "gasReceiverAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "constAddressDeployerAddress": "0x69aeB7Dc4f2A86873Dae8D753DE89326Cf90a77a",
+    "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
+    "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
+    "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
+    "tokens": {},
+    "rpc": "http://localhost:8545"
+  },
+  {
+    "name": "Avalanche",
+    "chainId": 31337,
+    "userKeys": [
+      "0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
+      "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+      "0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356",
+      "0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97",
+      "0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
+    ],
+    "ownerKey": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    "operatorKey": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
+    "relayerKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
+    "adminKeys": [
+      "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+    ],
+    "threshold": 1,
+    "lastRelayedBlock": 0,
+    "lastExpressedBlock": 0,
+    "gatewayAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "gasReceiverAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "constAddressDeployerAddress": "0x69aeB7Dc4f2A86873Dae8D753DE89326Cf90a77a",
+    "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
+    "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
+    "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
+    "tokens": {},
+    "rpc": "http://localhost:8546"
+  },
+  {
+    "name": "Moonbeam",
+    "chainId": 31337,
+    "userKeys": [
+      "0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
+      "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+      "0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356",
+      "0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97",
+      "0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
+    ],
+    "ownerKey": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    "operatorKey": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
+    "relayerKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
+    "adminKeys": [
+      "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+    ],
+    "threshold": 1,
+    "lastRelayedBlock": 0,
+    "lastExpressedBlock": 0,
+    "gatewayAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "gasReceiverAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "constAddressDeployerAddress": "0x69aeB7Dc4f2A86873Dae8D753DE89326Cf90a77a",
+    "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
+    "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
+    "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
+    "tokens": {},
+    "rpc": "http://localhost:8547"
+  },
+  {
+    "name": "Fantom",
+    "chainId": 31337,
+    "userKeys": [
+      "0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
+      "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+      "0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356",
+      "0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97",
+      "0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
+    ],
+    "ownerKey": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    "operatorKey": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
+    "relayerKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
+    "adminKeys": [
+      "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+    ],
+    "threshold": 1,
+    "lastRelayedBlock": 0,
+    "lastExpressedBlock": 0,
+    "gatewayAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "gasReceiverAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "constAddressDeployerAddress": "0x69aeB7Dc4f2A86873Dae8D753DE89326Cf90a77a",
+    "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
+    "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
+    "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
+    "tokens": {},
+    "rpc": "http://localhost:8548"
+  },
+  {
+    "name": "Polygon",
+    "chainId": 31337,
+    "userKeys": [
+      "0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba",
+      "0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e",
+      "0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356",
+      "0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97",
+      "0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6"
+    ],
+    "ownerKey": "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    "operatorKey": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
+    "relayerKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
+    "adminKeys": [
+      "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
+    ],
+    "threshold": 1,
+    "lastRelayedBlock": 0,
+    "lastExpressedBlock": 0,
+    "gatewayAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+    "gasReceiverAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "constAddressDeployerAddress": "0x69aeB7Dc4f2A86873Dae8D753DE89326Cf90a77a",
+    "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
+    "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
+    "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
+    "tokens": {},
+    "rpc": "http://localhost:8549"
+  }
+]
