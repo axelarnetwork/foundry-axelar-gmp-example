@@ -179,8 +179,6 @@ local-check-balance:
 	@echo "Checking the balance of the account..."
 	node local/script/checkBalance.js
 
-
-
 # local chain targets
 local-chain-start:
 	@echo "Starting the local chain..."
@@ -198,35 +196,6 @@ start-local-script:
 	@echo "Local script executed successfully!"
 
 # Deploy all scripts to all networks
-# local-chain-deploy:
-# 	@for network in $(NETWORKS); do \
-# 		for script in $(SCRIPTS); do \
-# 			echo "Deploying $$script to $$network..."; \
-# 			if [ "$$script" = "ExecutableSample" ]; then \
-# 				LOCAL_SCRIPT_PATH="script/local/ExecutableSample.s.sol:ExecutableSampleScript"; \
-# 			elif [ "$$script" = "DistributionExecutable" ]; then \
-# 				LOCAL_SCRIPT_PATH="script/local/DistributionExecutable.s.sol:DistributionExecutableScript"; \
-# 			elif [ "$$script" = "SendAck" ]; then \
-# 				LOCAL_SCRIPT_PATH="script/local/SendAck.s.sol:SendAckScript"; \
-# 			fi; \
-# 			RPC_URL_VAR="LOCAL_$$(echo $$network | tr a-z A-Z)_RPC_URL"; \
-# 			RPC_URL=$${!RPC_URL_VAR}; \
-# 			echo "RPC URL: $$RPC_URL"; \
-# 			if [ -z "$$RPC_URL" ]; then \
-# 				echo "Error: RPC URL is not defined for $$network."; \
-# 				exit 1; \
-# 			fi; \
-# 			OUTPUT=$$(NETWORK=$$network forge script $$LOCAL_SCRIPT_PATH --rpc-url $$RPC_URL --broadcast); \
-# 			echo "$$OUTPUT"; \
-# 			SUCCESS_HASH=$$(echo "$$OUTPUT" | grep '\[Success\]Hash:' | awk '{print $$3}'); \
-# 			CONTRACT_ADDRESS=$$(echo "$$OUTPUT" | grep 'Contract Address:' | awk '{print $$3}'); \
-# 			NETWORK_UPPER=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
-# 			echo "LOCAL_$${NETWORK_UPPER}_SUCCESS_HASH=$$SUCCESS_HASH" >> .env; \
-# 			echo "LOCAL_$${NETWORK_UPPER}_CONTRACT_ADDRESS=$$CONTRACT_ADDRESS" >> .env; \
-# 			echo "$$script deployed successfully to $$network!"; \
-# 		done; \
-# 	done
-
 local-chain-deploy:
 	@for network in $(NETWORKS); do \
 		for script in $(SCRIPTS); do \
@@ -269,65 +238,19 @@ ifeq ($(SCRIPT),SendAck)
 LOCAL_SCRIPT_PATH=script/local/SendAck.s.sol:SendAckScript
 endif
 
-# local-chain-execute:
-# 	@echo "Using local private key for transactions..."
-# 	@$(eval FROM_UPPER=$(shell echo $(FROM) | tr a-z A-Z))
-# 	@$(eval TO_UPPER=$(shell echo $(TO) | tr a-z A-Z))
-# 	@$(eval VALUE_IN_WEI=$(shell echo 'scale=0; $(VALUE)*10^18/1' | bc -l))
-# 	@$(eval SRC_ADDRESS=$(shell grep "LOCAL_$(FROM_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
-# 	@$(eval DEST_ADDRESS=$(shell grep "LOCAL_$(TO_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
-# 	@$(eval RPC_URL_VAR=LOCAL_$(FROM_UPPER)_RPC_URL)
-# 	@$(eval RPC_URL=$(shell echo $($(RPC_URL_VAR))))
-# 	@if [ -z "$(SRC_ADDRESS)" ]; then \
-# 		echo "Error: Source contract address not found for $(FROM)."; \
-# 		exit 1; \
-# 	fi
-# 	@if [ -z "$(DEST_ADDRESS)" ]; then \
-# 		echo "Error: Destination contract address not found for $(TO)."; \
-# 		exit 1; \
-# 	fi
-# 	@if [ -z "$(RPC_URL)" ]; then \
-# 		echo "Error: RPC URL is not defined for $(FROM)."; \
-# 		exit 1; \
-# 	fi
-# 	@if [ "$(SCRIPT)" = "ExecutableSample" ]; then \
-# 		echo "Executing setRemoteValue for ExecutableSample..."; \
-# 		cast send --rpc-url $(RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
-# 			$(SRC_ADDRESS) "setRemoteValue(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI); \
-# 	else \
-# 		echo "Unsupported script $(SCRIPT)."; \
-# 		exit 1; \
-# 	fi
-
 local-chain-execute:
 	@echo "Using local private key for transactions..."
 	@if [ -z "$(LOCAL_PRIVATE_KEY)" ]; then \
 		echo "Error: LOCAL_PRIVATE_KEY is not set."; \
 		exit 1; \
 	fi
-	@echo "WARNING: Exposing private key for confirmation purposes only!"
-	@echo "Private Key: $(LOCAL_PRIVATE_KEY)"
-	
-	@echo "Converting FROM, TO, and SCRIPT to uppercase..."
 	@$(eval FROM_UPPER=$(shell echo $(FROM) | tr a-z A-Z))
 	@$(eval TO_UPPER=$(shell echo $(TO) | tr a-z A-Z))
 	@$(eval SCRIPT_UPPER=$(shell echo $(SCRIPT) | tr a-z A-Z))
-	@echo "FROM_UPPER: $(FROM_UPPER)"
-	@echo "TO_UPPER: $(TO_UPPER)"
-	@echo "SCRIPT_UPPER: $(SCRIPT_UPPER)"
-	@echo "MESSAGE: $(MESSAGE)"
-	
-	@echo "Calculating VALUE_IN_WEI..."
 	@$(eval VALUE_IN_WEI=$(shell echo 'scale=0; $(VALUE)*10^18/1' | bc -l))
-	@echo "VALUE_IN_WEI: $(VALUE_IN_WEI)"
-	
-	@echo "Determining SRC and DEST addresses from .env..."
 	@$(eval SRC_ADDRESS=$(shell grep "LOCAL_$(FROM_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
 	@$(eval DEST_ADDRESS=$(shell grep "LOCAL_$(TO_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
-	@echo "SRC_ADDRESS: $(SRC_ADDRESS)"
-	@echo "DEST_ADDRESS: $(DEST_ADDRESS)"
 	
-	@echo "Determining SRC and DEST RPC URLs..."
 	@$(eval RPC_URL_VAR=LOCAL_$(FROM_UPPER)_RPC_URL)
 	@$(eval SRC_RPC_URL=$(shell echo $($(RPC_URL_VAR))))
 	@$(eval DEST_RPC_URL_VAR=LOCAL_$(TO_UPPER)_RPC_URL)
@@ -341,10 +264,10 @@ local-chain-execute:
 	fi
 	
 	@echo "Reading initial state from destination network ($(TO_UPPER))..."
+	@echo "Value: "
 	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	@cast call $(DEST_ADDRESS) "sourceAddress()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	
+	@echo "Source Chain: "
+	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."	
 	@sleep 5
 	
 	@if [ "$(SCRIPT_UPPER)" = "EXECUTABLESAMPLE" ]; then \
@@ -359,10 +282,11 @@ local-chain-execute:
 	@sleep 30
 	
 	@echo "Reading final state from destination network ($(TO_UPPER))..."
-	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."
+	@echo "Value: "
+	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
+	@echo "Source Chain: "
 	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	@cast call $(DEST_ADDRESS) "sourceAddress()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	
+
 	@echo "Operation completed successfully!"
 
 
