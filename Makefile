@@ -244,17 +244,17 @@ local-chain-execute:
 		echo "Error: LOCAL_PRIVATE_KEY is not set."; \
 		exit 1; \
 	fi
-	@$(eval FROM_UPPER=$(shell echo $(FROM) | tr a-z A-Z))
-	@$(eval TO_UPPER=$(shell echo $(TO) | tr a-z A-Z))
-	@$(eval SCRIPT_UPPER=$(shell echo $(SCRIPT) | tr a-z A-Z))
-	@$(eval VALUE_IN_WEI=$(shell echo 'scale=0; $(VALUE)*10^18/1' | bc -l))
-	@$(eval SRC_ADDRESS=$(shell grep "LOCAL_$(FROM_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
-	@$(eval DEST_ADDRESS=$(shell grep "LOCAL_$(TO_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
+	$(eval FROM_UPPER=$(shell echo $(FROM) | tr a-z A-Z))
+	$(eval TO_UPPER=$(shell echo $(TO) | tr a-z A-Z))
+	$(eval SCRIPT_UPPER=$(shell echo $(SCRIPT) | tr a-z A-Z))
+	$(eval VALUE_IN_WEI=$(shell echo 'scale=0; $(VALUE)*10^18/1' | bc -l))
+	$(eval SRC_ADDRESS=$(shell grep "LOCAL_$(FROM_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
+	$(eval DEST_ADDRESS=$(shell grep "LOCAL_$(TO_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
 	
-	@$(eval RPC_URL_VAR=LOCAL_$(FROM_UPPER)_RPC_URL)
-	@$(eval SRC_RPC_URL=$(shell echo $($(RPC_URL_VAR))))
-	@$(eval DEST_RPC_URL_VAR=LOCAL_$(TO_UPPER)_RPC_URL)
-	@$(eval DEST_RPC_URL=$(shell echo $($(DEST_RPC_URL_VAR))))
+	$(eval RPC_URL_VAR=LOCAL_$(FROM_UPPER)_RPC_URL)
+	$(eval SRC_RPC_URL=$(shell echo $($(RPC_URL_VAR))))
+	$(eval DEST_RPC_URL_VAR=LOCAL_$(TO_UPPER)_RPC_URL)
+	$(eval DEST_RPC_URL=$(shell echo $($(DEST_RPC_URL_VAR))))
 	@echo "SRC_RPC_URL: $(SRC_RPC_URL)"
 	@echo "DEST_RPC_URL: $(DEST_RPC_URL)"
 	
@@ -263,30 +263,45 @@ local-chain-execute:
 		exit 1; \
 	fi
 	
-	@echo "Reading initial state from destination network ($(TO_UPPER))..."
-	@echo "Value: "
-	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	@echo "Source Chain: "
-	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."	
-	@sleep 5
-	
 	@if [ "$(SCRIPT_UPPER)" = "EXECUTABLESAMPLE" ]; then \
+		echo "Reading initial state from destination network ($(TO_UPPER))..."; \
+		echo "Value: "; \
+		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."; \
+		echo "Source Chain: "; \
+		cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."; \
 		echo "Executing setRemoteValue for ExecutableSample..."; \
+		sleep 5; \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			$(SRC_ADDRESS) "setRemoteValue(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
+		sleep 10; \
+		echo "Reading final state from destination network ($(TO_UPPER))..."; \
+		echo "Value: "; \
+		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
+		echo "Source Chain: "; \
+		cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
+	elif [ "$(SCRIPT_UPPER)" = "SENDACK" ]; then \
+		echo "Reading initial state from destination network ($(TO_UPPER))..."; \
+		echo "Message: "; \
+		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."; \
+		echo "Executing sendMessage for SendAck..."; \
+		sleep 5; \
+		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
+			$(SRC_ADDRESS) "sendMessage(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
+		sleep 10; \
+		echo "Reading final state from destination network ($(TO_UPPER))..."; \
+		echo "Message: "; \
+		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
+	elif [ "$(SCRIPT_UPPER)" = "DISTRIBUTIONEXECUTABLE" ]; then \
+		echo "Executing sendToMany for DistributionExecutable..."; \
+		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
+			$(SRC_ADDRESS) "sendToMany(string,string,address[],string,uint256)" \
+			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "$(SYMBOL)" "$(AMOUNT)" \
+			--value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
 	else \
 		echo "Unsupported script $(SCRIPT)."; \
 		exit 1; \
 	fi
 	
-	@sleep 30
-	
-	@echo "Reading final state from destination network ($(TO_UPPER))..."
-	@echo "Value: "
-	@cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-	@echo "Source Chain: "
-	@cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."
-
 	@echo "Operation completed successfully!"
 
 
