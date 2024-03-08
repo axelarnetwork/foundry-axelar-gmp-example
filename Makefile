@@ -292,11 +292,29 @@ local-chain-execute:
 		echo "Message: "; \
 		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
 	elif [ "$(SCRIPT_UPPER)" = "DISTRIBUTIONEXECUTABLE" ]; then \
+		echo "Checking initial balance for the account making the request..."; \
+		$(eval USDC_ADDRESS_VAR=LOCAL_$(FROM_UPPER)_USDC_ADDRESS) \
+		$(eval USDC_ADDRESS=$(shell echo $($(USDC_ADDRESS_VAR)))) \
+		$(eval ADDRESS_VAR=ADDRESS) \
+		$(eval ADDRESS=$(shell grep "$(ADDRESS_VAR)" .env | cut -d '=' -f2)) \
+		echo "USDC Address: $(USDC_ADDRESS)"; \
+		echo "Requesting account's address: $(ADDRESS)"; \
+		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
+		sleep 5; \
+		echo "Approving USDC spend..."; \
+		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
+			--gas-limit 100000 "$(USDC_ADDRESS)" "approve(address,uint256)" \
+			"$(SRC_ADDRESS)" "$(AMOUNT)" && echo "Approval successful." || echo "Failed to approve USDC spend."; \
+		sleep 5; \
 		echo "Executing sendToMany for DistributionExecutable..."; \
+		$(eval AMOUNT_IN_WEI=$(shell echo '$(AMOUNT)*10^18' | bc)) \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			$(SRC_ADDRESS) "sendToMany(string,string,address[],string,uint256)" \
-			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "$(SYMBOL)" "$(AMOUNT)" \
+			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "aUSDC" "$(AMOUNT_IN_WEI)" \
 			--value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
+		sleep 10; \
+		echo "Checking final balance for the account making the request..."; \
+		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read final balance from USDC contract."; \
 	else \
 		echo "Unsupported script $(SCRIPT)."; \
 		exit 1; \

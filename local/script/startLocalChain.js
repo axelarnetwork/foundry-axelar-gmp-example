@@ -57,9 +57,14 @@ import { promises as fs } from "fs";
 
       existingEnvData[`LOCAL_${prefix}_RPC_URL`] = data.rpc;
 
-      console.log(`${chain.name} gatewayAddress:`, data.gatewayAddress);
-      console.log(`${chain.name} gasReceiverAddress:`, data.gasReceiverAddress);
-      // ...existing logic
+      chain.usdc = await chain.deployToken(
+        "Axelar Wrapped USDC",
+        "aUSDC",
+        6,
+        BigInt(1e18)
+      );
+
+      existingEnvData[`LOCAL_${prefix}_USDC_ADDRESS`] = chain.usdc.address;
     },
   });
 

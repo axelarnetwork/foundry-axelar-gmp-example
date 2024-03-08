@@ -1,0 +1,17 @@
+{
+  "Ethereum": {
+    "usdcAddress": "0x77FA77329213BaA86f2581a2a71A37c8481a6A3D"
+  },
+  "Avalanche": {
+    "usdcAddress": "0x77FA77329213BaA86f2581a2a71A37c8481a6A3D"
+  },
+  "Moonbeam": {
+    "usdcAddress": "0x77FA77329213BaA86f2581a2a71A37c8481a6A3D"
+  },
+  "Fantom": {
+    "usdcAddress": "0x77FA77329213BaA86f2581a2a71A37c8481a6A3D"
+  },
+  "Polygon": {
+    "usdcAddress": "0x77FA77329213BaA86f2581a2a71A37c8481a6A3D"
+  }
+}

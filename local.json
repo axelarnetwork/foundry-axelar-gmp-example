@@ -24,7 +24,9 @@
     "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
     "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
     "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
-    "tokens": {},
+    "tokens": {
+      "aUSDC": "aUSDC"
+    },
     "rpc": "http://localhost:8545"
   },
   {
@@ -52,7 +54,9 @@
     "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
     "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
     "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
-    "tokens": {},
+    "tokens": {
+      "aUSDC": "aUSDC"
+    },
     "rpc": "http://localhost:8546"
   },
   {
@@ -80,7 +84,9 @@
     "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
     "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
     "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
-    "tokens": {},
+    "tokens": {
+      "aUSDC": "aUSDC"
+    },
     "rpc": "http://localhost:8547"
   },
   {
@@ -108,7 +114,9 @@
     "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
     "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
     "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
-    "tokens": {},
+    "tokens": {
+      "aUSDC": "aUSDC"
+    },
     "rpc": "http://localhost:8548"
   },
   {
@@ -136,7 +144,9 @@
     "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
     "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
     "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
-    "tokens": {},
+    "tokens": {
+      "aUSDC": "aUSDC"
+    },
     "rpc": "http://localhost:8549"
   }
 ]
