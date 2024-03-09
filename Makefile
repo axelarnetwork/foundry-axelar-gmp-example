@@ -305,7 +305,7 @@ local-chain-execute:
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			--gas-limit 100000 "$(USDC_ADDRESS)" "approve(address,uint256)" \
 			"$(SRC_ADDRESS)" "$(AMOUNT)" && echo "Approval successful." || echo "Failed to approve USDC spend."; \
-		sleep 5; \
+		sleep 10; \
 		echo "Executing sendToMany for DistributionExecutable..."; \
 		$(eval AMOUNT_IN_WEI=$(shell echo '$(AMOUNT)*10^18' | bc)) \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
