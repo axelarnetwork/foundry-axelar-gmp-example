@@ -20,3 +20,4 @@ build
 artifacts
 cache
 yarn-error.log
+local.json
