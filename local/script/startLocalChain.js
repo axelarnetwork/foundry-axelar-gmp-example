@@ -68,18 +68,14 @@ import { ethers } from "ethers";
         "Axelar Wrapped USDC",
         "aUSDC",
         6,
-        BigInt(1e18)
+        ethers.utils.parseEther("1000")
       );
 
       existingEnvData[`LOCAL_${prefix}_USDC_ADDRESS`] = chain.usdc.address;
 
       // Fund each address with 1 aUSDC
       for (const address of toFund) {
-        await chain.giveToken(
-          address,
-          "aUSDC",
-          ethers.utils.parseEther("1")
-        );
+        await chain.giveToken(address, "aUSDC", ethers.utils.parseEther("1"));
       }
     },
   });
@@ -91,5 +87,3 @@ import { ethers } from "ethers";
     console.error("Error writing .env file:", error);
   }
 })();
-
-

@@ -315,7 +315,7 @@ local-chain-execute:
 			$(SRC_ADDRESS) "sendToMany(string,string,address[],string,uint256)" \
 			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "aUSDC" "$(AMOUNT_IN_WEI)" \
 			--value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		sleep 10; \
+		sleep 5; \
 		echo "Checking final balance for the account making the request..."; \
 		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(LOCAL_ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read final balance from USDC contract."; \
 	else \
