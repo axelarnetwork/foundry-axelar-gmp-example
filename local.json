@@ -16,14 +16,14 @@
       "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
     ],
     "threshold": 1,
-    "lastRelayedBlock": 0,
-    "lastExpressedBlock": 0,
-    "gatewayAddress": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-    "gasReceiverAddress": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-    "constAddressDeployerAddress": "0x69aeB7Dc4f2A86873Dae8D753DE89326Cf90a77a",
-    "create3DeployerAddress": "0x783E7717fD4592814614aFC47ee92568a495Ce0B",
-    "InterchainTokenService": "0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A",
-    "InterchainTokenFactory": "0x32F7601175Cb8481Bd7fD6A5a86187566A2Dc622",
+    "lastRelayedBlock": 44,
+    "lastExpressedBlock": 44,
+    "gatewayAddress": "0x9d4454B023096f34B160D6B654540c56A1F81688",
+    "gasReceiverAddress": "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+    "constAddressDeployerAddress": "0xeD0F3388b6FB7cEa2e79677409daF71e9AC9fAc9",
+    "create3DeployerAddress": "0xC5BC88985BbbfBF14566a0b27a63d25bda35CaF1",
+    "InterchainTokenService": "0xDbb7B42a11847318e4866be31F59bc661e1003ce",
+    "InterchainTokenFactory": "0x3D8f93C80dfe661Abc927001d85629A60EAc8843",
     "tokens": {
       "aUSDC": "aUSDC"
     },

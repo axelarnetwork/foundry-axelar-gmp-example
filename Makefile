@@ -298,8 +298,8 @@ local-chain-execute:
 		$(eval ADDRESS_VAR=ADDRESS) \
 		$(eval ADDRESS=$(shell grep "$(ADDRESS_VAR)" .env | cut -d '=' -f2)) \
 		echo "USDC Address: $(USDC_ADDRESS)"; \
-		echo "Requesting account's address: $(ADDRESS)"; \
-		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
+		echo "Requesting account's address: $(LOCAL_ADDRESS)"; \
+		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(LOCAL_ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
 		sleep 5; \
 		echo "Approving USDC spend..."; \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
@@ -314,7 +314,7 @@ local-chain-execute:
 			--value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
 		sleep 10; \
 		echo "Checking final balance for the account making the request..."; \
-		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read final balance from USDC contract."; \
+		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" $(LOCAL_ADDRESS) --rpc-url $(SRC_RPC_URL) || echo "Failed to read final balance from USDC contract."; \
 	else \
 		echo "Unsupported script $(SCRIPT)."; \
 		exit 1; \
