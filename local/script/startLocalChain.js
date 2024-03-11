@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 (async () => {
   const envFilePath = ".env"; // Path to your .env file
 
+  // Function to load the .env file and parse its contents into an object
   async function loadEnvFile(filePath) {
     try {
       const data = await fs.readFile(filePath, { encoding: "utf8" });
@@ -25,6 +26,7 @@ import { ethers } from "ethers";
     }
   }
 
+  // Function to write the updated object back to the .env file
   async function saveEnvFile(filePath, data) {
     const envContent = Object.entries(data)
       .map(([key, value]) => `${key}=${value}`)
@@ -32,20 +34,10 @@ import { ethers } from "ethers";
     await fs.writeFile(filePath, envContent, { encoding: "utf8" });
   }
 
+  // Load existing .env data or initialize a new object if the file doesn't exist
   const existingEnvData = await loadEnvFile(envFilePath);
 
-  const toFund = [
-    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-    "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-    "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
-    "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
-    "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
-    "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
-    "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
-    "0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f",
-    "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720",
-  ];
+  const toFund = ["0x70997970C51812dc3A010C7d01b50e0d17dc79C8"];
 
   await setupAndExport({
     chains: [
@@ -59,6 +51,7 @@ import { ethers } from "ethers";
     callback: async (chain, data) => {
       const prefix = data.name.toUpperCase();
 
+      // Update or add new data for each chain
       existingEnvData[`LOCAL_${prefix}_GATEWAY_ADDRESS`] = data.gatewayAddress;
       existingEnvData[`LOCAL_${prefix}_GAS_RECEIVER_ADDRESS`] =
         data.gasReceiverAddress;
@@ -73,14 +66,19 @@ import { ethers } from "ethers";
 
       existingEnvData[`LOCAL_${prefix}_USDC_ADDRESS`] = chain.usdc.address;
 
-      // Fund each address with 1 aUSDC
+      // Fund each address with 10 aUSDC
       for (const address of toFund) {
-        await chain.giveToken(address, "aUSDC", ethers.utils.parseEther("1"));
+        await chain.giveToken(
+          address,
+          "aUSDC",
+          ethers.utils.parseUnits("10", 6)
+        );
       }
     },
   });
 
   try {
+    // Save the updated or new .env data
     await saveEnvFile(envFilePath, existingEnvData);
     console.log("Chain data saved or updated in .env");
   } catch (error) {
