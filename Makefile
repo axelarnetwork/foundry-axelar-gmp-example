@@ -3,7 +3,7 @@
 export
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc help all install update execute local testnet
+.PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy
 
 # Supported networks and scripts
 NETWORKS = ethereum avalanche moonbeam fantom polygon
@@ -174,10 +174,7 @@ execute:
 		fi; \
 	fi
 
-# local targets
-local-check-balance:
-	@echo "Checking the balance of the account..."
-	node local/script/checkBalance.js
+
 
 # local chain targets
 local-chain-start:
@@ -191,7 +188,6 @@ local-chain-start:
 	node local/script/startLocalChain.js
 	@echo "Local script executed successfully!"
 
-# Deploy all scripts to all networks
 local-chain-deploy:
 	@for network in $(NETWORKS); do \
 		for script in $(SCRIPTS); do \
@@ -216,11 +212,21 @@ local-chain-deploy:
 			CONTRACT_ADDRESS=$$(echo "$$OUTPUT" | grep 'Contract Address:' | awk '{print $$3}'); \
 			NETWORK_UPPER=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
 			SCRIPT_UPPER=$$(echo $$script | tr '[:lower:]' '[:upper:]'); \
-			printf "\n\nLOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_SUCCESS_HASH=$$SUCCESS_HASH\nLOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_CONTRACT_ADDRESS=$$CONTRACT_ADDRESS\n" >> .env; \
+			KEY_HASH="LOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_SUCCESS_HASH"; \
+			KEY_ADDRESS="LOCAL_$${NETWORK_UPPER}_$${SCRIPT_UPPER}_CONTRACT_ADDRESS"; \
+			if grep -q $$KEY_HASH .env; then \
+				sed -i'.bak' "s/^$${KEY_HASH}=.*$$/$${KEY_HASH}=$$SUCCESS_HASH/" .env && rm .env.bak; \
+			else \
+				echo "" >> .env && echo "$${KEY_HASH}=$$SUCCESS_HASH" >> .env; \
+			fi; \
+			if grep -q $$KEY_ADDRESS .env; then \
+				sed -i'.bak' "s/^$${KEY_ADDRESS}=.*$$/$${KEY_ADDRESS}=$$CONTRACT_ADDRESS/" .env && rm .env.bak; \
+			else \
+				echo "" >> .env && echo "$${KEY_ADDRESS}=$$CONTRACT_ADDRESS" >> .env; \
+			fi; \
 			echo "$$script deployed successfully to $$network!"; \
 		done; \
 	done
-
 
 
 # Determine the script path outside of the recipe
