@@ -71,7 +71,7 @@ import { ethers } from "ethers";
         await chain.giveToken(
           address,
           "aUSDC",
-          ethers.utils.parseUnits("10", 6)
+          ethers.utils.parseUnits("200", 6)
         );
       }
     },

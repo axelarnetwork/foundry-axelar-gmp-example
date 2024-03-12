@@ -187,11 +187,7 @@ local-chain-start:
 	anvil -p 8546 & \
 	anvil -p 8547 & \
 	anvil -p 8548 & \
-	anvil -p 8549
-	@echo "Anvil instances started successfully!"
-
-start-local-script:
-	@echo "Running the local script..."
+	anvil -p 8549 & \
 	node local/script/startLocalChain.js
 	@echo "Local script executed successfully!"
 
@@ -273,8 +269,8 @@ local-chain-execute:
 		sleep 5; \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			$(SRC_ADDRESS) "setRemoteValue(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		sleep 10; \
 		echo "Reading final state from destination network ($(TO_UPPER))..."; \
+		sleep 10; \
 		echo "Value: "; \
 		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
 		echo "Source Chain: "; \
@@ -287,12 +283,12 @@ local-chain-execute:
 		sleep 5; \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			$(SRC_ADDRESS) "sendMessage(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		sleep 10; \
 		echo "Reading final state from destination network ($(TO_UPPER))..."; \
+		sleep 10; \
 		echo "Message: "; \
 		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
 	elif [ "$(SCRIPT_UPPER)" = "DISTRIBUTIONEXECUTABLE" ]; then \
-		echo "Checking initial balance for the account making the request..."; \
+		echo "Checking initial aUSDC balance for the account making the request..."; \
 		$(eval USDC_ADDRESS_VAR=LOCAL_$(FROM_UPPER)_USDC_ADDRESS) \
 		$(eval USDC_ADDRESS=$(shell echo $($(USDC_ADDRESS_VAR)))) \
 		$(eval ADDRESS_VAR=ADDRESS) \
@@ -300,26 +296,28 @@ local-chain-execute:
 		echo "USDC Address: $(USDC_ADDRESS)"; \
 		echo "SRC Address: $(SRC_ADDRESS)"; \
 		echo "Requesting account's address: $(LOCAL_ADDRESS)"; \
-		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(SRC_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
-		sleep 5; \
+		$(eval BALANCE_BEFORE=$(shell cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL))) \
+	    echo "Initial balance: $${BALANCE_BEFORE}"; \
 		echo "Approving USDC spend..."; \
+		sleep 5; \
 		$(eval AMOUNT_IN_SMALLEST_UNIT=$(shell echo '$(AMOUNT)*10^6' | bc)) \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			--gas-limit 100000 "$(USDC_ADDRESS)" "approve(address,uint256)" \
 			"$(SRC_ADDRESS)" "$(AMOUNT_IN_SMALLEST_UNIT)" && echo "Approval successful." || echo "Failed to approve USDC spend."; \
-		sleep 5; \
 		echo "Checking USDC allowance..."; \
-		cast call $(USDC_ADDRESS) "allowance(address,address)(uint256)" "$(LOCAL_ADDRESS)" "$(SRC_ADDRESS)" --rpc-url $(SRC_RPC_URL); \
 		sleep 5; \
+		cast call $(USDC_ADDRESS) "allowance(address,address)(uint256)" "$(LOCAL_ADDRESS)" "$(SRC_ADDRESS)" --rpc-url $(SRC_RPC_URL); \
 		echo "Executing sendToMany for DistributionExecutable..."; \
+		sleep 5; \
 		$(eval AMOUNT_IN_WEI=$(shell echo '$(AMOUNT)*10^6' | bc)) \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			$(SRC_ADDRESS) "sendToMany(string,string,address[],string,uint256)" \
 			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "aUSDC" "$(AMOUNT_IN_WEI)" \
 			--value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		sleep 10; \
 		echo "Checking final balance for the account making the request..."; \
-		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(SRC_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
+		sleep 10; \
+		echo "Checking final aUSDC balance for the account making the request..."; \
+		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
 	else \
 		echo "Unsupported script $(SCRIPT)."; \
 		exit 1; \

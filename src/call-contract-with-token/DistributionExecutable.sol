@@ -24,9 +24,10 @@ contract DistributionExecutable is AxelarExecutable {
 
         address tokenAddress = gateway.tokenAddresses(symbol);
 
-         // Check that the sender has enough balance and has allowed the contract to spend the amount.
+        // Check that the sender has enough balance and has allowed the contract to spend the amount.
         require(IERC20(tokenAddress).balanceOf(msg.sender) >= amount, "Insufficient balance");
         require(IERC20(tokenAddress).allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
+        
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
         IERC20(tokenAddress).approve(address(gateway), amount);
         bytes memory payload = abi.encode(destinationAddresses);
