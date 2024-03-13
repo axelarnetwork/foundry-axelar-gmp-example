@@ -3,7 +3,7 @@
 export
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy
+.PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute
 
 # Supported networks and scripts
 NETWORKS = ethereum avalanche moonbeam fantom polygon
@@ -25,7 +25,7 @@ help:
 	@echo "help                   - Display this help message."
 
 
-all: clean setup-env build
+all: clean setup-env build install
 
 setup-env: 
 	@if [ ! -f .env ]; then \
@@ -292,7 +292,7 @@ local-chain-execute:
 		echo "Reading final state from destination network ($(TO_UPPER))..."; \
 		sleep 10; \
 		echo "Message: "; \
-		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
+		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(SRC_RPC_URL) || echo "Failed to read final state from destination contract."; \
 	elif [ "$(SCRIPT_UPPER)" = "DISTRIBUTIONEXECUTABLE" ]; then \
 		echo "Checking initial aUSDC balance for the account making the request..."; \
 		$(eval USDC_ADDRESS_VAR=LOCAL_$(FROM_UPPER)_USDC_ADDRESS) \
