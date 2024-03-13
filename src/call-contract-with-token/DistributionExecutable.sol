@@ -23,6 +23,11 @@ contract DistributionExecutable is AxelarExecutable {
         require(msg.value > 0, "Gas payment is required");
 
         address tokenAddress = gateway.tokenAddresses(symbol);
+
+        // Check that the sender has enough balance and has allowed the contract to spend the amount.
+        require(IERC20(tokenAddress).balanceOf(msg.sender) >= amount, "Insufficient balance");
+        require(IERC20(tokenAddress).allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
+        
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
         IERC20(tokenAddress).approve(address(gateway), amount);
         bytes memory payload = abi.encode(destinationAddresses);
@@ -33,18 +38,26 @@ contract DistributionExecutable is AxelarExecutable {
     }
 
     function _executeWithToken(
-        string calldata,
-        string calldata,
+        string calldata sourceChain,
+        string calldata sourceAddress,
         bytes calldata payload,
         string calldata tokenSymbol,
         uint256 amount
     ) internal override {
+        require(amount > 0, "Amount must be greater than 0");
         address[] memory recipients = abi.decode(payload, (address[]));
+        require(recipients.length > 0, "Recipients cannot be empty");
+
         address tokenAddress = gateway.tokenAddresses(tokenSymbol);
+        require(tokenAddress != address(0), "Invalid token address");
 
         uint256 sentAmount = amount / recipients.length;
+        require(sentAmount > 0, "Sent amount must be greater than 0");
+
         for (uint256 i = 0; i < recipients.length; i++) {
+            require(recipients[i] != address(0), "Invalid recipient address");
             IERC20(tokenAddress).transfer(recipients[i], sentAmount);
         }
     }
+
 }
