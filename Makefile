@@ -25,7 +25,7 @@ help:
 	@echo "help                   - Display this help message."
 
 
-all: clean setup-env build install
+all: clean setup-env install build
 
 setup-env: 
 	@if [ ! -f .env ]; then \
