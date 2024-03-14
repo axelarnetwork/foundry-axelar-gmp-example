@@ -252,19 +252,19 @@ local-chain-execute:
 	$(eval VALUE_IN_WEI=$(shell echo 'scale=0; $(VALUE)*10^18/1' | bc -l))
 	$(eval SRC_ADDRESS=$(shell grep "LOCAL_$(FROM_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
 	$(eval DEST_ADDRESS=$(shell grep "LOCAL_$(TO_UPPER)_$(SCRIPT_UPPER)_CONTRACT_ADDRESS" .env | cut -d '=' -f2))
-	
+
 	$(eval RPC_URL_VAR=LOCAL_$(FROM_UPPER)_RPC_URL)
 	$(eval SRC_RPC_URL=$(shell echo $($(RPC_URL_VAR))))
 	$(eval DEST_RPC_URL_VAR=LOCAL_$(TO_UPPER)_RPC_URL)
 	$(eval DEST_RPC_URL=$(shell echo $($(DEST_RPC_URL_VAR))))
 	@echo "SRC_RPC_URL: $(SRC_RPC_URL)"
 	@echo "DEST_RPC_URL: $(DEST_RPC_URL)"
-	
+
 	@if [ -z "$(SRC_RPC_URL)" ] || [ -z "$(DEST_RPC_URL)" ]; then \
 		echo "Error: RPC URL is not defined correctly."; \
 		exit 1; \
 	fi
-	
+
 	@if [ "$(SCRIPT_UPPER)" = "EXECUTABLESAMPLE" ]; then \
 		echo "Reading initial state from destination network ($(TO_UPPER))..."; \
 		echo "Value: "; \
@@ -303,7 +303,7 @@ local-chain-execute:
 		echo "SRC Address: $(SRC_ADDRESS)"; \
 		echo "Requesting account's address: $(LOCAL_ADDRESS)"; \
 		$(eval BALANCE_BEFORE=$(shell cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL))) \
-	    echo "Initial balance: $${BALANCE_BEFORE}"; \
+		echo "Initial balance: $${BALANCE_BEFORE}"; \
 		echo "Approving USDC spend..."; \
 		sleep 5; \
 		$(eval AMOUNT_IN_SMALLEST_UNIT=$(shell echo '$(AMOUNT)*10^6' | bc)) \
@@ -328,7 +328,7 @@ local-chain-execute:
 		echo "Unsupported script $(SCRIPT)."; \
 		exit 1; \
 	fi
-	
+
 	@echo "Operation completed successfully!"
 
 
