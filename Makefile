@@ -185,6 +185,7 @@ local-chain-start:
 	anvil -p 8547 & \
 	anvil -p 8548 & \
 	anvil -p 8549 & \
+	sleep 10; \
 	node local/script/startLocalChain.js
 	@echo "Local script executed successfully!"
 
