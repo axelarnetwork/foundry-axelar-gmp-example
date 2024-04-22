@@ -30,6 +30,7 @@ PARTICULAR PURPOSE.
 
 This program was built for i386-apple-darwin11.3.0
 ```
+- [Node](https://nodejs.org/en) version >= `18.19.0`
 
 ## Installation
 
