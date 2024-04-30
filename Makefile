@@ -71,13 +71,13 @@ rpc:
 
 # Determine the script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
-SCRIPT_PATH=script/ExecutableSample.s.sol:ExecutableSampleScript
+SCRIPT_PATH=script/testnet/ExecutableSample.s.sol:ExecutableSampleScript
 endif
 ifeq ($(SCRIPT),DistributionExecutable)
-SCRIPT_PATH=script/DistributionExecutable.s.sol:DistributionExecutableScript
+SCRIPT_PATH=script/testnet/DistributionExecutable.s.sol:DistributionExecutableScript
 endif
 ifeq ($(SCRIPT),SendAck)
-SCRIPT_PATH=script/SendAck.s.sol:SendAckScript
+SCRIPT_PATH=script/testnet/SendAck.s.sol:SendAckScript
 endif
 
 # Deploy target to testnet
