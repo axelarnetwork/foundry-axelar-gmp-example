@@ -102,9 +102,9 @@ endif
 execute:
 	@echo "Please enter the details:"; \
 	read -p "Contract Name (e.g., ExecutableSample, DistributionExecutable, SendAck): " contract_name; \
-	read -p "Network (e.g., polygon, avalanche, binance, scroll_sepolia, base): " network; \
+	read -p "Source Chain Network (e.g., ethereum, avalanche, moonbeam, fantom, polygon): " network; \
 	read -p "Source chain contract address: " src_address; \
-	read -p "Destination chain (e.g., Polygon, Avalanche, binance, scroll, base): " dest_chain; \
+	read -p "Destination Chain Network (e.g., ethereum-sepolia, Avalanche, Moonbeam, Fantom, Polygon): " dest_chain; \
 	read -p "Destination chain contract address: " dest_address; \
 	read -p "Value to send in ether (e.g., 0.5): " value_in_ether; \
 	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
@@ -148,9 +148,9 @@ execute:
 		amount_in_mwei=$$(echo "scale=0; $$amount*10^6/1" | bc); \
 		dest_addrs_array="[$$(echo $$dest_addresses | sed 's/,/, /g')]"; \
 		echo "\033[32mExecuting transaction for DistributionExecutable...\033[0m"; \
-		cast send 0x2c852e740B62308c46DD29B982FBb650D063Bd07 "approve(address,uint256)" $$src_address $$approved_amount_in_mwei --rpc-url $$rpc_url --private-key $$PRIVATE_KEY && \
+		cast send 0x2c852e740B62308c46DD29B982FBb650D063Bd07 "approve(address,uint256)" $$src_address $$approved_amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY && \
 		echo "\033[32mApproval transaction complete, now executing sendToMany...\033[0m"; \
-		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$$dest_addrs_array" $$symbol $$amount_in_mwei --rpc-url $$rpc_url --private-key $$PRIVATE_KEY --value $$value_in_wei || \
+		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$$dest_addrs_array" $$symbol $$amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
 		echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
 	else \
 		read -p "Message to send: " message; \
@@ -166,7 +166,7 @@ execute:
 			method_name="setRemoteValue(string,string,string)"; \
 		fi; \
 		if [ -n "$$method_name" ]; then \
-			cast send $$src_address "$$method_name" $$dest_chain $$dest_address $$message --rpc-url $$rpc_url --private-key $$PRIVATE_KEY --value $$value_in_wei || \
+			cast send $$src_address "$$method_name" $$dest_chain $$dest_address $$message --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
 			echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
 		else \
 			echo "\033[31mInvalid contract name. Please enter a valid contract name.\033[0m"; \

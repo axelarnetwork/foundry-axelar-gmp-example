@@ -290,7 +290,7 @@ Operation completed successfully!
 Update the `TESTNET_PRIVATE_KEY` variable with your private key in your `.env`
 
 ```bash
-TESTNET_PRIVATE_KEY=YOUR_KEY_HERE
+TESTNET_PRIVATE_KEY=0xYOUR_KEY_HERE
 ```
 > ⚠️ WARNING: Never commit your`TESTNET_PRIVATE_KEY` to any public repository or share it with anyone. Exposing your private key compromises the security of your assets and can result in loss or theft. Always keep it confidential and store it securely. If you believe your private key has been exposed, take immediate action to secure your accounts.
 
@@ -339,7 +339,7 @@ Source chain contract address: 0xc399215e17114437C36BCD6b8B85d8D2452fBea8
 Destination chain (e.g., ethereum, avalanche, moonbeam, fantom, polygon): Avalanche
 Destination chain contract address: 0x9fee1724451844198613fC6F84600A727cB2752A
 Value to send in ether (e.g., 0.5 or less): 0.5
-Message to send: Hello World
+Message to send: Hello
 Executing transaction for ExecutableSample...
 blockHash               0x21261347224496250ca623aab4f99ccbdf27b6625a9d4c9652a248961c96f4c4
 blockNumber             42074801

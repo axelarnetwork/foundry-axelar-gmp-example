@@ -14,11 +14,11 @@ contract NetworkDetailsBase is Script {
 
     constructor() {
         // Initialize network details
-        networkDetails["ethereum"] = NetworkDetails(vm.envAddress("ETHEREUM_GATEWAY_ADDRESS"), vm.envAddress("ETHEREUM_GATEWAY_ADDRESS"));
-        networkDetails["avalanche"] = NetworkDetails(vm.envAddress("AVALANCHE_GATEWAY_ADDRESS"), vm.envAddress("AVALANCHE_GAS_RECEIVER_ADDRESS"));
-        networkDetails["moonbeam"] = NetworkDetails(vm.envAddress("MOONBEAM_GATEWAY_ADDRESS"), vm.envAddress("MOONBEAM_GAS_RECEIVER_ADDRESS"));
-        networkDetails["fantom"] = NetworkDetails(vm.envAddress("FANTOM_GATEWAY_ADDRESS"), vm.envAddress("FANTOM_GAS_RECEIVER_ADDRESS"));
-        networkDetails["polygon"] = NetworkDetails(vm.envAddress("POLYGON_GATEWAY_ADDRESS"), vm.envAddress("POLYGON_GAS_RECEIVER_ADDRESS"));
+        networkDetails["ethereum"] = NetworkDetails(vm.envAddress("ETHEREUM_GATEWAY_ADDRESS"), vm.envAddress("ETHEREUM_GAS_SERVICE_ADDRESS"));
+        networkDetails["avalanche"] = NetworkDetails(vm.envAddress("AVALANCHE_GATEWAY_ADDRESS"), vm.envAddress("AVALANCHE_GAS_SERVICE_ADDRESS"));
+        networkDetails["moonbeam"] = NetworkDetails(vm.envAddress("MOONBEAM_GATEWAY_ADDRESS"), vm.envAddress("MOONBEAM_GAS_SERVICE_ADDRESS"));
+        networkDetails["fantom"] = NetworkDetails(vm.envAddress("FANTOM_GATEWAY_ADDRESS"), vm.envAddress("FANTOM_GAS_SERVICE_ADDRESS"));
+        networkDetails["polygon"] = NetworkDetails(vm.envAddress("POLYGON_GATEWAY_ADDRESS"), vm.envAddress("POLYGON_GAS_SERVICE_ADDRESS"));
     }
 
     function getNetworkDetails(string memory network) internal view returns (address gateway, address gasService) {
