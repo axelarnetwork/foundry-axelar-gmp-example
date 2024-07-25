@@ -2,6 +2,15 @@
 -include .env
 export
 
+# Color definitions
+CYAN := \033[0;36m
+YELLOW := \033[0;33m
+GREEN := \033[0;32m
+RED := \033[0;31m
+BLUE := \033[0;34m
+MAGENTA := \033[0;35m
+NC := \033[0m # No Color
+
 # PHONY Targets declaration
 .PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute
 
@@ -11,62 +20,74 @@ SCRIPTS = ExecutableSample DistributionExecutable SendAck
 
 # Help target - Displays available commands with descriptions
 help:
-	@echo "\033[0;32mAvailable targets:\033[0m"
-	@echo "setup-env              - Set up the environment by creating a .env file from .env.example."
-	@echo "install                - Install dependencies using the forge tool."
-	@echo "build                  - Build using the forge tool."
-	@echo "update                 - Update dependencies using the forge tool."
-	@echo "deploy                 - Deploy the specified script to the specified network."
-	@echo "execute                - Execute the specified script manually."
-	@echo "format                 - Format using the forge tool."
-	@echo "test                   - Run tests using the forge tool."
-	@echo "clean                  - Clean using the forge tool."
-	@echo "rpc                    - Display the RPC URLs for all supported networks."
-	@echo "help                   - Display this help message."
+	@echo "$(GREEN)Available targets:$(NC)"
+	@echo "$(CYAN)setup-env$(NC)              - Set up the environment by creating a .env file from .env.example."
+	@echo "$(CYAN)install$(NC)                - Install dependencies using the forge tool."
+	@echo "$(CYAN)build$(NC)                  - Build using the forge tool."
+	@echo "$(CYAN)update$(NC)                 - Update dependencies using the forge tool."
+	@echo "$(CYAN)deploy$(NC)                 - Deploy the specified script to the specified network."
+	@echo "$(CYAN)execute$(NC)                - Execute the specified script manually."
+	@echo "$(CYAN)format$(NC)                 - Format using the forge tool."
+	@echo "$(CYAN)test$(NC)                   - Run tests using the forge tool."
+	@echo "$(CYAN)clean$(NC)                  - Clean using the forge tool."
+	@echo "$(CYAN)rpc$(NC)                    - Display the RPC URLs for all supported networks."
+	@echo "$(CYAN)help$(NC)                   - Display this help message."
 
 all: clean setup-env install build
 
 setup-env:
 	@if [ ! -f .env ]; then \
-		echo "\033[0;33m⤵ Reading .env.example.\033[0m"; \
+		echo "$(YELLOW)⤵ Reading .env.example.$(NC)"; \
 		node local/script/setupEnv.js; \
-		echo "\033[0;33m⤵ Creating .env file.\033[0m"; \
-		echo "\033[0;32m📨 Created .env file successfully!\033[0m"; \
+		echo "$(YELLOW)⤵ Creating .env file.$(NC)"; \
+		echo "$(GREEN)📨 Created .env file successfully!$(NC)"; \
 	else \
-		echo "\033[0;34mA .env file already exists, not modifying it.\033[0m"; \
+		echo "$(BLUE)A .env file already exists, not modifying it.$(NC)"; \
 	fi
 
 # Install Dependencies
 install:
-	forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.5.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit & npm install
+	@echo "$(YELLOW)Installing dependencies...$(NC)"
+	@forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.5.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit & npm install
+	@echo "$(GREEN)Dependencies installed successfully!$(NC)"
 
 # Update Dependencies
 update:
-	forge update
+	@echo "$(YELLOW)Updating dependencies...$(NC)"
+	@forge update
+	@echo "$(GREEN)Dependencies updated successfully!$(NC)"
 
 # Build target
 build:
-	forge build && rm -rf artifacts && npx hardhat clean && npx hardhat compile
+	@echo "$(YELLOW)Building project...$(NC)"
+	@forge build && rm -rf artifacts && npx hardhat clean && npx hardhat compile
+	@echo "$(GREEN)Build completed successfully!$(NC)"
 
 # Format target
 format:
+	@echo "$(YELLOW)Formatting code...$(NC)"
 	@forge fmt
+	@echo "$(GREEN)Formatting completed successfully!$(NC)"
 
 # Test target
 test:
+	@echo "$(YELLOW)Running tests...$(NC)"
 	@forge test -vvv
+	@echo "$(GREEN)Tests completed successfully!$(NC)"
 
 # Clean target
 clean:
-	@:; forge clean
+	@echo "$(YELLOW)Cleaning project...$(NC)"
+	@forge clean
+	@echo "$(GREEN)Clean completed successfully!$(NC)"
 
 # Display RPC URLs
 rpc:
-	@echo "\033[0;32mPolygon RPC URL:\033[0m" $(ETHEREUM_TESTNET_RPC_URL)
-	@echo "\033[0;34mAvalanche RPC URL:\033[0m" $(AVALANCHE_TESTNET_RPC_URL)
-	@echo "\033[0;35mBinance RPC URL:\033[0m" $(MOONBEAM_TESTNET_RPC_URL)
-	@echo "\033[0;36mScroll RPC URL:\033[0m" $(FANTOM_TESTNET_RPC_URL)
-	@echo "\033[0;33mBase RPC URL:\033[0m" $(POLYGON_TESTNET_RPC_URL)
+	@echo "$(GREEN)Polygon RPC URL:$(NC)" $(ETHEREUM_TESTNET_RPC_URL)
+	@echo "$(BLUE)Avalanche RPC URL:$(NC)" $(AVALANCHE_TESTNET_RPC_URL)
+	@echo "$(MAGENTA)Binance RPC URL:$(NC)" $(MOONBEAM_TESTNET_RPC_URL)
+	@echo "$(CYAN)Scroll RPC URL:$(NC)" $(FANTOM_TESTNET_RPC_URL)
+	@echo "$(YELLOW)Base RPC URL:$(NC)" $(POLYGON_TESTNET_RPC_URL)
 
 # Determine the script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
@@ -82,24 +103,28 @@ endif
 # Deploy target to testnet
 deploy:
 ifndef NETWORK
-	$(error NETWORK is undefined. Supported networks are: $(NETWORKS))
+	@echo "$(RED)Error: NETWORK is undefined. Supported networks are: $(NETWORKS)$(NC)"
+	@exit 1
 endif
 ifndef SCRIPT
-	$(error SCRIPT is undefined. Supported scripts are: $(SCRIPTS))
+	@echo "$(RED)Error: SCRIPT is undefined. Supported scripts are: $(SCRIPTS)$(NC)"
+	@exit 1
 endif
 ifneq ($(findstring $(NETWORK),$(NETWORKS)), $(NETWORK))
-	$(error Invalid network argument passed. Supported networks are: $(NETWORKS))
+	@echo "$(RED)Error: Invalid network argument passed. Supported networks are: $(NETWORKS)$(NC)"
+	@exit 1
 endif
 ifneq ($(findstring $(SCRIPT),$(SCRIPTS)), $(SCRIPT))
-	$(error Invalid script argument passed. Supported scripts are: $(SCRIPTS))
+	@echo "$(RED)Error: Invalid script argument passed. Supported scripts are: $(SCRIPTS)$(NC)"
+	@exit 1
 endif
-	@echo "Current NETWORK: $(NETWORK)"
+	@echo "$(YELLOW)Current NETWORK: $(NETWORK)$(NC)"
 	@NETWORK=$(NETWORK) forge script $(SCRIPT_PATH) --rpc-url $($(shell echo $(NETWORK) | tr a-z A-Z)_TESTNET_RPC_URL) --broadcast --legacy
-	@echo "Script executed successfully!"
+	@echo "$(GREEN)Script executed successfully!$(NC)"
 
 # Execute the command manually after asking for user input
 execute:
-	@echo "Please enter the details:"; \
+	@echo "$(YELLOW)Please enter the details:$(NC)"; \
 	read -p "Contract Name (e.g., ExecutableSample, DistributionExecutable, SendAck): " contract_name; \
 	read -p "Source Chain Network (e.g., ethereum, avalanche, moonbeam, fantom, polygon): " network; \
 	read -p "Source chain contract address: " src_address; \
@@ -108,34 +133,34 @@ execute:
 	read -p "Value to send in ether (e.g., 0.5): " value_in_ether; \
 	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
 	if [ -z "$$value_in_wei" ]; then \
-		echo "\033[31mFailed to convert value to wei. Please enter a valid numeric value.\033[0m"; \
+		echo "$(RED)Failed to convert value to wei. Please enter a valid numeric value.$(NC)"; \
 		exit 1; \
 	fi; \
 	if [ -z "$$network" ]; then \
-		echo "\033[31mNetwork not provided. Please enter a valid network.\033[0m"; \
+		echo "$(RED)Network not provided. Please enter a valid network.$(NC)"; \
 		exit 1; \
 	fi; \
 	if [ -z "$$src_address" ]; then \
-		echo "\033[31mSource contract address not provided. Please enter a valid address.\033[0m"; \
+		echo "$(RED)Source contract address not provided. Please enter a valid address.$(NC)"; \
 		exit 1; \
 	fi; \
 	if [ -z "$$dest_chain" ]; then \
-		echo "\033[31mDestination chain not provided. Please enter a valid destination chain.\033[0m"; \
+		echo "$(RED)Destination chain not provided. Please enter a valid destination chain.$(NC)"; \
 		exit 1; \
 	fi; \
 	if [ -z "$$dest_address" ]; then \
-		echo "\033[31mDestination contract address not provided. Please enter a valid address.\033[0m"; \
+		echo "$(RED)Destination contract address not provided. Please enter a valid address.$(NC)"; \
 		exit 1; \
 	fi; \
 	if [ -z "$$value_in_ether" ]; then \
-		echo "\033[31mValue in ether not provided. Please enter a valid amount.\033[0m"; \
+		echo "$(RED)Value in ether not provided. Please enter a valid amount.$(NC)"; \
 		exit 1; \
 	fi; \
 	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
 	rpc_url_var=$${network_upper}_TESTNET_RPC_URL; \
 	rpc_url=$${!rpc_url_var}; \
 	if [ -z "$$rpc_url" ]; then \
-		echo "\033[31mRPC URL for $$network is not set in .env. Please set the RPC URL for your network.\033[0m"; \
+		echo "$(RED)RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
 		exit 1; \
 	fi; \
 	if [ "$$contract_name" = "DistributionExecutable" ]; then \
@@ -146,18 +171,18 @@ execute:
 		read -p "Amount to send: " amount; \
 		amount_in_mwei=$$(echo "scale=0; $$amount*10^6/1" | bc); \
 		dest_addrs_array="[$$(echo $$dest_addresses | sed 's/,/, /g')]"; \
-		echo "\033[32mExecuting transaction for DistributionExecutable...\033[0m"; \
+		echo "$(YELLOW)Executing transaction for DistributionExecutable...$(NC)"; \
 		cast send 0x2c852e740B62308c46DD29B982FBb650D063Bd07 "approve(address,uint256)" $$src_address $$approved_amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY && \
-		echo "\033[32mApproval transaction complete, now executing sendToMany...\033[0m"; \
+		echo "$(GREEN)Approval transaction complete, now executing sendToMany...$(NC)"; \
 		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$$dest_addrs_array" $$symbol $$amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
-		echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
+		echo "$(RED)Transaction failed. Please check the provided details and try again.$(NC)"; \
 	else \
 		read -p "Message to send: " message; \
 		if [ -z "$$message" ]; then \
-			echo "\033[31mMessage not provided. Please enter a valid message to send.\033[0m"; \
+			echo "$(RED)Message not provided. Please enter a valid message to send.$(NC)"; \
 			exit 1; \
 		fi; \
-		echo "\033[32mExecuting transaction for $$contract_name...\033[0m"; \
+		echo "$(YELLOW)Executing transaction for $$contract_name...$(NC)"; \
 		method_name=""; \
 		if [ "$$contract_name" = "SendAck" ]; then \
 			method_name="sendMessage(string,string,string)"; \
@@ -166,16 +191,16 @@ execute:
 		fi; \
 		if [ -n "$$method_name" ]; then \
 			cast send $$src_address "$$method_name" $$dest_chain $$dest_address $$message --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
-			echo "\033[31mTransaction failed. Please check the provided details and try again.\033[0m"; \
+			echo "$(RED)Transaction failed. Please check the provided details and try again.$(NC)"; \
 		else \
-			echo "\033[31mInvalid contract name. Please enter a valid contract name.\033[0m"; \
+			echo "$(RED)Invalid contract name. Please enter a valid contract name.$(NC)"; \
 			exit 1; \
 		fi; \
 	fi
 
 # local chain targets
 local-chain-start:
-	@echo "Starting the local chain..."
+	@echo "$(YELLOW)Starting the local chain...$(NC)"
 	anvil > ./anvil-output.log 2>&1 &
 	anvil -p 8546 > ./anvil-8546-output.log 2>&1 &
 	anvil -p 8547 > ./anvil-8547-output.log 2>&1 &
@@ -183,12 +208,12 @@ local-chain-start:
 	anvil -p 8549 > ./anvil-8549-output.log 2>&1 &
 	sleep 10; \
 	node local/script/startLocalChain.js
-	@echo "Local script executed successfully!"
+	@echo "$(GREEN)Local script executed successfully!$(NC)"
 
 local-chain-deploy:
 	@for network in $(NETWORKS); do \
 		for script in $(SCRIPTS); do \
-			echo "Deploying $$script to $$network..."; \
+			echo "$(YELLOW)Deploying $$script to $$network...$(NC)"; \
 			if [ "$$script" = "ExecutableSample" ]; then \
 				LOCAL_SCRIPT_PATH="script/local/ExecutableSample.s.sol:ExecutableSampleScript"; \
 			elif [ "$$script" = "DistributionExecutable" ]; then \
@@ -198,9 +223,9 @@ local-chain-deploy:
 			fi; \
 			RPC_URL_VAR="LOCAL_$$(echo $$network | tr a-z A-Z)_RPC_URL"; \
 			RPC_URL=$${!RPC_URL_VAR}; \
-			echo "RPC URL: $$RPC_URL"; \
+			echo "$(BLUE)RPC URL: $$RPC_URL$(NC)"; \
 			if [ -z "$$RPC_URL" ]; then \
-				echo "Error: RPC URL is not defined for $$network."; \
+				echo "$(RED)Error: RPC URL is not defined for $$network.$(NC)"; \
 				exit 1; \
 			fi; \
 			OUTPUT=$$(NETWORK=$$network forge script $$LOCAL_SCRIPT_PATH --rpc-url $$RPC_URL --broadcast); \
@@ -221,7 +246,7 @@ local-chain-deploy:
 			else \
 				echo "" >> .env && echo "$${KEY_ADDRESS}=$$CONTRACT_ADDRESS" >> .env; \
 			fi; \
-			echo "$$script deployed successfully to $$network!"; \
+			echo "$(GREEN)$$script deployed successfully to $$network!$(NC)"; \
 		done; \
 	done
 
@@ -237,9 +262,9 @@ LOCAL_SCRIPT_PATH=script/local/SendAck.s.sol:SendAckScript
 endif
 
 local-chain-execute:
-	@echo "Using local private key for transactions..."
+	@echo "$(YELLOW)Using local private key for transactions...$(NC)"
 	@if [ -z "$(LOCAL_PRIVATE_KEY)" ]; then \
-		echo "Error: LOCAL_PRIVATE_KEY is not set."; \
+		echo "$(RED)Error: LOCAL_PRIVATE_KEY is not set.$(NC)"; \
 		exit 1; \
 	fi
 	$(eval FROM_UPPER=$(shell echo $(FROM) | tr a-z A-Z))
@@ -253,76 +278,76 @@ local-chain-execute:
 	$(eval SRC_RPC_URL=$(shell echo $($(RPC_URL_VAR))))
 	$(eval DEST_RPC_URL_VAR=LOCAL_$(TO_UPPER)_RPC_URL)
 	$(eval DEST_RPC_URL=$(shell echo $($(DEST_RPC_URL_VAR))))
-	@echo "SRC_RPC_URL: $(SRC_RPC_URL)"
-	@echo "DEST_RPC_URL: $(DEST_RPC_URL)"
+	@echo "$(BLUE)SRC_RPC_URL: $(SRC_RPC_URL)$(NC)"
+	@echo "$(BLUE)DEST_RPC_URL: $(DEST_RPC_URL)$(NC)"
 
 	@if [ -z "$(SRC_RPC_URL)" ] || [ -z "$(DEST_RPC_URL)" ]; then \
-		echo "Error: RPC URL is not defined correctly."; \
+		echo "$(RED)Error: RPC URL is not defined correctly.$(NC)"; \
 		exit 1; \
 	fi
 
 	@if [ "$(SCRIPT_UPPER)" = "EXECUTABLESAMPLE" ]; then \
-		echo "Reading initial state from destination network ($(TO_UPPER))..."; \
-		echo "Value: "; \
-		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."; \
-		echo "Source Chain: "; \
-		cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."; \
-		echo "Executing setRemoteValue for ExecutableSample..."; \
+		echo "$(YELLOW)Reading initial state from destination network ($(TO_UPPER))...$(NC)"; \
+		echo "$(CYAN)Value: $(NC)"; \
+		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read initial state from destination contract.$(NC)"; \
+		echo "$(CYAN)Source Chain: $(NC)"; \
+		cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read initial state from destination contract.$(NC)"; \
+		echo "$(YELLOW)Executing setRemoteValue for ExecutableSample...$(NC)"; \
 		sleep 5; \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
-			$(SRC_ADDRESS) "setRemoteValue(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		echo "Reading final state from destination network ($(TO_UPPER))..."; \
+			$(SRC_ADDRESS) "setRemoteValue(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "$(GREEN)Transaction sent successfully.$(NC)" || echo "$(RED)Failed to send transaction.$(NC)"; \
+		echo "$(YELLOW)Reading final state from destination network ($(TO_UPPER))...$(NC)"; \
 		sleep 10; \
-		echo "Value: "; \
-		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
-		echo "Source Chain: "; \
-		cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read final state from destination contract."; \
+		echo "$(CYAN)Value: $(NC)"; \
+		cast call $(DEST_ADDRESS) "value()(string)" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read final state from destination contract.$(NC)"; \
+		echo "$(CYAN)Source Chain: $(NC)"; \
+		cast call $(DEST_ADDRESS) "sourceChain()(string)" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read final state from destination contract.$(NC)"; \
 	elif [ "$(SCRIPT_UPPER)" = "SENDACK" ]; then \
-		echo "Reading initial state from destination network ($(TO_UPPER))..."; \
-		echo "Message: "; \
-		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial state from destination contract."; \
-		echo "Executing sendMessage for SendAck..."; \
+		echo "$(YELLOW)Reading initial state from destination network ($(TO_UPPER))...$(NC)"; \
+		echo "$(CYAN)Message: $(NC)"; \
+		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read initial state from destination contract.$(NC)"; \
+		echo "$(YELLOW)Executing sendMessage for SendAck...$(NC)"; \
 		sleep 5; \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
-			$(SRC_ADDRESS) "sendMessage(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		echo "Reading final state from destination network ($(TO_UPPER))..."; \
+			$(SRC_ADDRESS) "sendMessage(string,string,string)" "$(TO)" "$(DEST_ADDRESS)" "$(MESSAGE)" --value $(VALUE_IN_WEI) && echo "$(GREEN)Transaction sent successfully.$(NC)" || echo "$(RED)Failed to send transaction.$(NC)"; \
+		echo "$(YELLOW)Reading final state from destination network ($(TO_UPPER))...$(NC)"; \
 		sleep 10; \
-		echo "Message: "; \
-		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(SRC_RPC_URL) || echo "Failed to read final state from destination contract."; \
+		echo "$(CYAN)Message: $(NC)"; \
+		cast call $(DEST_ADDRESS) "message()(string)" --rpc-url $(SRC_RPC_URL) || echo "$(RED)Failed to read final state from destination contract.$(NC)"; \
 	elif [ "$(SCRIPT_UPPER)" = "DISTRIBUTIONEXECUTABLE" ]; then \
-		echo "Checking initial aUSDC balance for the account making the request..."; \
+		echo "$(YELLOW)Checking initial aUSDC balance for the account making the request...$(NC)"; \
 		$(eval USDC_ADDRESS_VAR=LOCAL_$(FROM_UPPER)_USDC_ADDRESS) \
 		$(eval USDC_ADDRESS=$(shell echo $($(USDC_ADDRESS_VAR)))) \
 		$(eval ADDRESS_VAR=ADDRESS) \
 		$(eval ADDRESS=$(shell grep "$(ADDRESS_VAR)" .env | cut -d '=' -f2)) \
-		echo "USDC Address: $(USDC_ADDRESS)"; \
-		echo "SRC Address: $(SRC_ADDRESS)"; \
-		echo "Requesting account's address: $(LOCAL_ADDRESS)"; \
+		echo "$(CYAN)USDC Address: $(USDC_ADDRESS)$(NC)"; \
+		echo "$(CYAN)SRC Address: $(SRC_ADDRESS)$(NC)"; \
+		echo "$(CYAN)Requesting account's address: $(LOCAL_ADDRESS)$(NC)"; \
 		$(eval BALANCE_BEFORE=$(shell cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL))) \
-		echo "Initial balance: $${BALANCE_BEFORE}"; \
-		echo "Approving USDC spend..."; \
+		echo "$(CYAN)Initial balance: $${BALANCE_BEFORE}$(NC)"; \
+		echo "$(YELLOW)Approving USDC spend...$(NC)"; \
 		sleep 5; \
 		$(eval AMOUNT_IN_SMALLEST_UNIT=$(shell echo '$(AMOUNT)*10^6' | bc)) \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			--gas-limit 100000 "$(USDC_ADDRESS)" "approve(address,uint256)" \
-			"$(SRC_ADDRESS)" "$(AMOUNT_IN_SMALLEST_UNIT)" && echo "Approval successful." || echo "Failed to approve USDC spend."; \
-		echo "Checking USDC allowance..."; \
+			"$(SRC_ADDRESS)" "$(AMOUNT_IN_SMALLEST_UNIT)" && echo "$(GREEN)Approval successful.$(NC)" || echo "$(RED)Failed to approve USDC spend.$(NC)"; \
+		echo "$(YELLOW)Checking USDC allowance...$(NC)"; \
 		sleep 5; \
 		cast call $(USDC_ADDRESS) "allowance(address,address)(uint256)" "$(LOCAL_ADDRESS)" "$(SRC_ADDRESS)" --rpc-url $(SRC_RPC_URL); \
-		echo "Executing sendToMany for DistributionExecutable..."; \
+		echo "$(YELLOW)Executing sendToMany for DistributionExecutable...$(NC)"; \
 		sleep 5; \
 		$(eval AMOUNT_IN_WEI=$(shell echo '$(AMOUNT)*10^6' | bc)) \
 		cast send --rpc-url $(SRC_RPC_URL) --private-key $(LOCAL_PRIVATE_KEY) \
 			$(SRC_ADDRESS) "sendToMany(string,string,address[],string,uint256)" \
 			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "aUSDC" "$(AMOUNT_IN_WEI)" \
-			--value $(VALUE_IN_WEI) && echo "Transaction sent successfully." || echo "Failed to send transaction."; \
-		echo "Checking final balance for the account making the request..."; \
+			--value $(VALUE_IN_WEI) && echo "$(GREEN)Transaction sent successfully.$(NC)" || echo "$(RED)Failed to send transaction.$(NC)"; \
+		echo "$(YELLOW)Checking final balance for the account making the request...$(NC)"; \
 		sleep 10; \
-		echo "Checking final aUSDC balance for the account making the request..."; \
-		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL) || echo "Failed to read initial balance from USDC contract."; \
+		echo "$(YELLOW)Checking final aUSDC balance for the account making the request...$(NC)"; \
+		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read initial balance from USDC contract.$(NC)"; \
 	else \
-		echo "Unsupported script $(SCRIPT)."; \
+		echo "$(RED)Unsupported script $(SCRIPT).$(NC)"; \
 		exit 1; \
 	fi
 
-	@echo "Operation completed successfully!"
+	@echo "$(GREEN)Operation completed successfully!$(NC)"
