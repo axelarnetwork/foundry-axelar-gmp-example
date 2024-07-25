@@ -62,11 +62,11 @@ clean:
 
 # Display RPC URLs
 rpc:
-	@echo "\033[0;32mPolygon RPC URL:\033[0m" $(POLYGON_TESTNET_RPC_URL)
+	@echo "\033[0;32mPolygon RPC URL:\033[0m" $(ETHEREUM_TESTNET_RPC_URL)
 	@echo "\033[0;34mAvalanche RPC URL:\033[0m" $(AVALANCHE_TESTNET_RPC_URL)
-	@echo "\033[0;35mBinance RPC URL:\033[0m" $(BINANCE_TESTNET_RPC_URL)
-	@echo "\033[0;36mScroll RPC URL:\033[0m" $(SCROLL_SEPOLIA_TESTNET_RPC_URL)
-	@echo "\033[0;33mBase RPC URL:\033[0m" $(BASE_TESTNET_RPC_URL)
+	@echo "\033[0;35mBinance RPC URL:\033[0m" $(MOONBEAM_TESTNET_RPC_URL)
+	@echo "\033[0;36mScroll RPC URL:\033[0m" $(FANTOM_TESTNET_RPC_URL)
+	@echo "\033[0;33mBase RPC URL:\033[0m" $(POLYGON_TESTNET_RPC_URL)
 
 # Determine the script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
