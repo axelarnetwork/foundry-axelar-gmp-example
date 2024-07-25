@@ -21,3 +21,4 @@ build
 artifacts
 yarn-error.log
 local.json
+anvil-*

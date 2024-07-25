@@ -14,20 +14,19 @@ help:
 	@echo "\033[0;32mAvailable targets:\033[0m"
 	@echo "setup-env              - Set up the environment by creating a .env file from .env.example."
 	@echo "install                - Install dependencies using the forge tool."
-	@echo "build                  - Build using the forge tool." 
+	@echo "build                  - Build using the forge tool."
 	@echo "update                 - Update dependencies using the forge tool."
 	@echo "deploy                 - Deploy the specified script to the specified network."
 	@echo "execute                - Execute the specified script manually."
 	@echo "format                 - Format using the forge tool."
 	@echo "test                   - Run tests using the forge tool."
 	@echo "clean                  - Clean using the forge tool."
-	@echo "rpc                    - Display the RPC URLs for all supported networks." 
+	@echo "rpc                    - Display the RPC URLs for all supported networks."
 	@echo "help                   - Display this help message."
-
 
 all: clean setup-env install build
 
-setup-env: 
+setup-env:
 	@if [ ! -f .env ]; then \
 		echo "\033[0;33m⤵ Reading .env.example.\033[0m"; \
 		node local/script/setupEnv.js; \
@@ -44,30 +43,30 @@ install:
 # Update Dependencies
 update:
 	forge update
-# Build target   
+
+# Build target
 build:
-	forge build & rm -rf artifacts && npx hardhat clean && npx hardhat compile; \
+	forge build && rm -rf artifacts && npx hardhat clean && npx hardhat compile
 
 # Format target
-format: 
+format:
 	@forge fmt
-   
-# Test target   
+
+# Test target
 test:
 	@forge test -vvv
-  
+
 # Clean target
 clean:
 	@:; forge clean
 
-# Display RPC URLs 
+# Display RPC URLs
 rpc:
-	@echo "\033[0;32mPolygon RPC URL:\033[0m" $(POLYGON_TESTNET_RPC_URL)     
+	@echo "\033[0;32mPolygon RPC URL:\033[0m" $(POLYGON_TESTNET_RPC_URL)
 	@echo "\033[0;34mAvalanche RPC URL:\033[0m" $(AVALANCHE_TESTNET_RPC_URL)
-	@echo "\033[0;35mBinance RPC URL:\033[0m" $(BINANCE_TESTNET_RPC_URL)     
-	@echo "\033[0;36mScroll RPC URL:\033[0m" $(SCROLL_SEPOLIA_TESTNET_RPC_URL)       
+	@echo "\033[0;35mBinance RPC URL:\033[0m" $(BINANCE_TESTNET_RPC_URL)
+	@echo "\033[0;36mScroll RPC URL:\033[0m" $(SCROLL_SEPOLIA_TESTNET_RPC_URL)
 	@echo "\033[0;33mBase RPC URL:\033[0m" $(BASE_TESTNET_RPC_URL)
-
 
 # Determine the script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
@@ -97,7 +96,7 @@ endif
 	@echo "Current NETWORK: $(NETWORK)"
 	@NETWORK=$(NETWORK) forge script $(SCRIPT_PATH) --rpc-url $($(shell echo $(NETWORK) | tr a-z A-Z)_TESTNET_RPC_URL) --broadcast --legacy
 	@echo "Script executed successfully!"
-           
+
 # Execute the command manually after asking for user input
 execute:
 	@echo "Please enter the details:"; \
@@ -112,7 +111,7 @@ execute:
 		echo "\033[31mFailed to convert value to wei. Please enter a valid numeric value.\033[0m"; \
 		exit 1; \
 	fi; \
-		if [ -z "$$network" ]; then \
+	if [ -z "$$network" ]; then \
 		echo "\033[31mNetwork not provided. Please enter a valid network.\033[0m"; \
 		exit 1; \
 	fi; \
@@ -174,17 +173,14 @@ execute:
 		fi; \
 	fi
 
-
-
 # local chain targets
 local-chain-start:
 	@echo "Starting the local chain..."
 	anvil > ./anvil-output.log 2>&1 &
-	anvil & \
-	anvil -p 8546 & \
-	anvil -p 8547 & \
-	anvil -p 8548 & \
-	anvil -p 8549 & \
+	anvil -p 8546 > ./anvil-8546-output.log 2>&1 &
+	anvil -p 8547 > ./anvil-8547-output.log 2>&1 &
+	anvil -p 8548 > ./anvil-8548-output.log 2>&1 &
+	anvil -p 8549 > ./anvil-8549-output.log 2>&1 &
 	sleep 10; \
 	node local/script/startLocalChain.js
 	@echo "Local script executed successfully!"
@@ -228,7 +224,6 @@ local-chain-deploy:
 			echo "$$script deployed successfully to $$network!"; \
 		done; \
 	done
-
 
 # Determine the script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
@@ -331,10 +326,3 @@ local-chain-execute:
 	fi
 
 	@echo "Operation completed successfully!"
-
-
-
-
-
-
-
