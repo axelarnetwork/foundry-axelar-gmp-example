@@ -56,6 +56,10 @@ import { ethers } from "ethers";
       existingEnvData[`LOCAL_${prefix}_GAS_RECEIVER_ADDRESS`] =
         data.gasReceiverAddress;
       existingEnvData[`LOCAL_${prefix}_RPC_URL`] = data.rpc;
+      existingEnvData[`LOCAL_${prefix}_INTERCHAIN_TOKEN_SERVICE`] =
+        data.InterchainTokenService;
+      existingEnvData[`LOCAL_${prefix}_INTERCHAIN_TOKEN_FACTORY`] =
+        data.InterchainTokenFactory;
 
       chain.usdc = await chain.deployToken(
         "Axelar Wrapped USDC",

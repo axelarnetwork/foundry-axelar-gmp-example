@@ -201,11 +201,11 @@ execute:
 # local chain targets
 local-chain-start:
 	@echo "$(YELLOW)Starting the local chain...$(NC)"
-	anvil > ./anvil-output.log 2>&1 &
-	anvil -p 8546 > ./anvil-8546-output.log 2>&1 &
-	anvil -p 8547 > ./anvil-8547-output.log 2>&1 &
-	anvil -p 8548 > ./anvil-8548-output.log 2>&1 &
-	anvil -p 8549 > ./anvil-8549-output.log 2>&1 &
+	anvil &
+	anvil -p 8546 &
+	anvil -p 8547 &
+	anvil -p 8548 &
+	anvil -p 8549 &
 	sleep 10; \
 	node local/script/startLocalChain.js
 	@echo "$(GREEN)Local script executed successfully!$(NC)"
@@ -351,3 +351,39 @@ local-chain-execute:
 	fi
 
 	@echo "$(GREEN)Operation completed successfully!$(NC)"
+
+# Interchain Token Service
+# Deploy Interchain Token
+deploy-interchain-token:
+	@echo "$(YELLOW)Deploying Interchain Token...$(NC)"
+	@read -p "Enter network (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter token name: " token_name; \
+	read -p "Enter token symbol: " token_symbol; \
+	read -p "Enter token decimals: " token_decimals; \
+	read -p "Enter initial token amount: " token_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="LOCAL_$${network_upper}_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: Network (uppercase): $$network_upper$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Token Name: $$token_name$(NC)"; \
+	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
+	echo "$(CYAN)Debug: Token Decimals: $$token_decimals$(NC)"; \
+	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
+	script_path="script/local/InterchainToken.s.sol"; \
+	echo "$(CYAN)Debug: Script path: $$script_path$(NC)"; \
+	NETWORK=$$network_upper \
+	TOKEN_NAME=$$token_name \
+	TOKEN_SYMBOL=$$token_symbol \
+	TOKEN_DECIMALS=$$token_decimals \
+	TOKEN_AMOUNT=$$token_amount \
+	forge script $$script_path:InterchainTokenScript \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		-vvvv || { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Interchain Token deployment completed!$(NC)"

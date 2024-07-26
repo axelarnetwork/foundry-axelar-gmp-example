@@ -1,15 +1,18 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {AxelarExecutable} from "@axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
-import {IAxelarGateway} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
-import {IAxelarGasService} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
-import {IERC20} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol";
+import "@axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
+import "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
+import "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
+import "@axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol";
 
 contract DistributionExecutable is AxelarExecutable {
     IAxelarGasService public immutable gasService;
 
-    constructor(address gateway_, address gasReceiver_) AxelarExecutable(gateway_) {
+    constructor(
+        address gateway_,
+        address gasReceiver_
+    ) AxelarExecutable(gateway_) {
         gasService = IAxelarGasService(gasReceiver_);
     }
 
@@ -25,16 +28,34 @@ contract DistributionExecutable is AxelarExecutable {
         address tokenAddress = gateway.tokenAddresses(symbol);
 
         // Check that the sender has enough balance and has allowed the contract to spend the amount.
-        require(IERC20(tokenAddress).balanceOf(msg.sender) >= amount, "Insufficient balance");
-        require(IERC20(tokenAddress).allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
-        
+        require(
+            IERC20(tokenAddress).balanceOf(msg.sender) >= amount,
+            "Insufficient balance"
+        );
+        require(
+            IERC20(tokenAddress).allowance(msg.sender, address(this)) >= amount,
+            "Insufficient allowance"
+        );
+
         IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
         IERC20(tokenAddress).approve(address(gateway), amount);
         bytes memory payload = abi.encode(destinationAddresses);
         gasService.payNativeGasForContractCallWithToken{value: msg.value}(
-            address(this), destinationChain, destinationAddress, payload, symbol, amount, msg.sender
+            address(this),
+            destinationChain,
+            destinationAddress,
+            payload,
+            symbol,
+            amount,
+            msg.sender
         );
-        gateway.callContractWithToken(destinationChain, destinationAddress, payload, symbol, amount);
+        gateway.callContractWithToken(
+            destinationChain,
+            destinationAddress,
+            payload,
+            symbol,
+            amount
+        );
     }
 
     function _executeWithToken(
@@ -59,5 +80,4 @@ contract DistributionExecutable is AxelarExecutable {
             IERC20(tokenAddress).transfer(recipients[i], sentAmount);
         }
     }
-
 }

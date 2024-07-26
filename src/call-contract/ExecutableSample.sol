@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {AxelarExecutable} from "@axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
-import {IAxelarGateway} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
-import {IAxelarGasService} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
-import {IERC20} from "@axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol";
+import "@axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
+import "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
+import "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 
 contract ExecutableSample is AxelarExecutable {
     string public value;
@@ -12,7 +11,10 @@ contract ExecutableSample is AxelarExecutable {
     string public sourceAddress;
     IAxelarGasService public immutable gasService;
 
-    constructor(address gateway_, address gasReceiver_) AxelarExecutable(gateway_) {
+    constructor(
+        address gateway_,
+        address gasReceiver_
+    ) AxelarExecutable(gateway_) {
         gasService = IAxelarGasService(gasReceiver_);
     }
 
@@ -26,16 +28,21 @@ contract ExecutableSample is AxelarExecutable {
 
         bytes memory payload = abi.encode(value_);
         gasService.payNativeGasForContractCall{value: msg.value}(
-            address(this), destinationChain, destinationAddress, payload, msg.sender
+            address(this),
+            destinationChain,
+            destinationAddress,
+            payload,
+            msg.sender
         );
         gateway.callContract(destinationChain, destinationAddress, payload);
     }
 
     // Handles calls created by setAndSend. Updates this contract's value
-    function _execute(string calldata sourceChain_, string calldata sourceAddress_, bytes calldata payload_)
-        internal
-        override
-    {
+    function _execute(
+        string calldata sourceChain_,
+        string calldata sourceAddress_,
+        bytes calldata payload_
+    ) internal override {
         (value) = abi.decode(payload_, (string));
         sourceChain = sourceChain_;
         sourceAddress = sourceAddress_;
