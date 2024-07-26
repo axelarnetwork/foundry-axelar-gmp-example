@@ -12,7 +12,7 @@ MAGENTA := \033[0;35m
 NC := \033[0m # No Color
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute
+.PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute deploy-interchain-token
 
 # Supported networks and scripts
 NETWORKS = ethereum avalanche moonbeam fantom polygon
@@ -32,6 +32,7 @@ help:
 	@echo "$(CYAN)clean$(NC)                  - Clean using the forge tool."
 	@echo "$(CYAN)rpc$(NC)                    - Display the RPC URLs for all supported networks."
 	@echo "$(CYAN)help$(NC)                   - Display this help message."
+	@echo "$(CYAN)deploy-interchain-token$(NC) - Deploy an interchain token."
 
 all: clean setup-env install build
 
@@ -356,20 +357,22 @@ local-chain-execute:
 # Deploy Interchain Token
 deploy-interchain-token:
 	@echo "$(YELLOW)Deploying Interchain Token...$(NC)"
-	@read -p "Enter network (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " source_chain; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " destination_chain; \
 	read -p "Enter token name: " token_name; \
 	read -p "Enter token symbol: " token_symbol; \
 	read -p "Enter token decimals: " token_decimals; \
 	read -p "Enter initial token amount: " token_amount; \
-	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
-	rpc_url_var="LOCAL_$${network_upper}_RPC_URL"; \
+	source_chain_upper=$$(echo $$source_chain | tr '[:lower:]' '[:upper:]'); \
+	destination_chain_upper=$$(echo $$destination_chain | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="LOCAL_$${source_chain_upper}_RPC_URL"; \
 	rpc_url=$${!rpc_url_var}; \
 	if [ -z "$$rpc_url" ]; then \
-		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		echo "$(RED)Error: RPC URL for $$source_chain is not set in .env. Please set the RPC URL for your network.$(NC)"; \
 		exit 1; \
 	fi; \
-	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
-	echo "$(CYAN)Debug: Network (uppercase): $$network_upper$(NC)"; \
+	echo "$(CYAN)Debug: Source Chain: $$source_chain_upper$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$destination_chain_upper$(NC)"; \
 	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
 	echo "$(CYAN)Debug: Token Name: $$token_name$(NC)"; \
 	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
@@ -377,7 +380,8 @@ deploy-interchain-token:
 	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
 	script_path="script/local/InterchainToken.s.sol"; \
 	echo "$(CYAN)Debug: Script path: $$script_path$(NC)"; \
-	NETWORK=$$network_upper \
+	SOURCE_CHAIN=$$source_chain_upper \
+	DESTINATION_CHAIN=$$destination_chain_upper \
 	TOKEN_NAME=$$token_name \
 	TOKEN_SYMBOL=$$token_symbol \
 	TOKEN_DECIMALS=$$token_decimals \
@@ -385,5 +389,5 @@ deploy-interchain-token:
 	forge script $$script_path:InterchainTokenScript \
 		--rpc-url $$rpc_url \
 		--broadcast \
-		-vvvv || { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
-	@echo "$(GREEN)Interchain Token deployment completed!$(NC)"
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Interchain Token deployment and transfer completed!$(NC)"
