@@ -16,7 +16,7 @@ NC := \033[0m # No Color
 
 # Supported networks and scripts
 NETWORKS = ethereum avalanche moonbeam fantom polygon
-SCRIPTS = ExecutableSample DistributionExecutable SendAck
+SCRIPTS = ExecutableSample DistributionExecutable SendAck CustomToken
 
 # Help target - Displays available commands with descriptions
 help:
@@ -216,11 +216,22 @@ local-chain-deploy:
 		for script in $(SCRIPTS); do \
 			echo "$(YELLOW)Deploying $$script to $$network...$(NC)"; \
 			if [ "$$script" = "ExecutableSample" ]; then \
-				LOCAL_SCRIPT_PATH="script/local/ExecutableSample.s.sol:ExecutableSampleScript"; \
+				LOCAL_SCRIPT_PATH="script/local/gmp/ExecutableSample.s.sol:ExecutableSampleScript"; \
 			elif [ "$$script" = "DistributionExecutable" ]; then \
-				LOCAL_SCRIPT_PATH="script/local/DistributionExecutable.s.sol:DistributionExecutableScript"; \
+				LOCAL_SCRIPT_PATH="script/local/gmp/DistributionExecutable.s.sol:DistributionExecutableScript"; \
 			elif [ "$$script" = "SendAck" ]; then \
-				LOCAL_SCRIPT_PATH="script/local/SendAck.s.sol:SendAckScript"; \
+				LOCAL_SCRIPT_PATH="script/local/gmp/SendAck.s.sol:SendAckScript"; \
+			elif [ "$$script" = "CustomToken" ]; then \
+				LOCAL_SCRIPT_PATH="script/local/its/CustomToken.s.sol:CustomTokenScript"; \
+				export SOURCE_CHAIN=$$network; \
+				export DESTINATION_CHAIN=$$(echo "$$NETWORKS" | tr ' ' '\n' | grep -v $$network | head -n 1); \
+				export TOKEN_NAME="CustomToken"; \
+				export TOKEN_SYMBOL="CT"; \
+				export TOKEN_DECIMALS=18; \
+				export TOKEN_AMOUNT=1000000000000000000000; \
+			else \
+				echo "$(RED)Error: Unsupported script $$script.$(NC)"; \
+				exit 1; \
 			fi; \
 			RPC_URL_VAR="LOCAL_$$(echo $$network | tr a-z A-Z)_RPC_URL"; \
 			RPC_URL=$${!RPC_URL_VAR}; \
@@ -253,13 +264,13 @@ local-chain-deploy:
 
 # Determine the script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
-LOCAL_SCRIPT_PATH=script/local/ExecutableSample.s.sol:ExecutableSampleScript
+LOCAL_SCRIPT_PATH=script/local/gmp/ExecutableSample.s.sol:ExecutableSampleScript
 endif
 ifeq ($(SCRIPT),DistributionExecutable)
-LOCAL_SCRIPT_PATH=script/local/DistributionExecutable.s.sol:DistributionExecutableScript
+LOCAL_SCRIPT_PATH=script/local/gmp/DistributionExecutable.s.sol:DistributionExecutableScript
 endif
 ifeq ($(SCRIPT),SendAck)
-LOCAL_SCRIPT_PATH=script/local/SendAck.s.sol:SendAckScript
+LOCAL_SCRIPT_PATH=script/local/gmp/SendAck.s.sol:SendAckScript
 endif
 
 local-chain-execute:
@@ -354,7 +365,7 @@ local-chain-execute:
 	@echo "$(GREEN)Operation completed successfully!$(NC)"
 
 # Interchain Token Service
-# Deploy Interchain Token
+
 deploy-interchain-token:
 	@echo "$(YELLOW)Deploying Interchain Token...$(NC)"
 	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " source_chain; \
@@ -378,7 +389,7 @@ deploy-interchain-token:
 	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
 	echo "$(CYAN)Debug: Token Decimals: $$token_decimals$(NC)"; \
 	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
-	script_path="script/local/InterchainToken.s.sol"; \
+	script_path="script/local/its/InterchainToken.s.sol"; \
 	echo "$(CYAN)Debug: Script path: $$script_path$(NC)"; \
 	SOURCE_CHAIN=$$source_chain_upper \
 	DESTINATION_CHAIN=$$destination_chain_upper \
@@ -391,3 +402,81 @@ deploy-interchain-token:
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
 	@echo "$(GREEN)Interchain Token deployment and transfer completed!$(NC)"
+
+
+setup-token-managers:
+	@echo "$(YELLOW)Setting up Token Managers...$(NC)"
+	@read -p "Enter source network (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_NETWORK; \
+	read -p "Enter destination network (ethereum, avalanche, moonbeam, fantom, polygon): " DEST_NETWORK; \
+	SOURCE_NETWORK_UPPER=$$(echo $$SOURCE_NETWORK | tr '[:lower:]' '[:upper:]'); \
+	DEST_NETWORK_UPPER=$$(echo $$DEST_NETWORK | tr '[:lower:]' '[:upper:]'); \
+	SOURCE_TOKEN_VAR="LOCAL_$${SOURCE_NETWORK_UPPER}_CUSTOMTOKEN_CONTRACT_ADDRESS"; \
+	DEST_TOKEN_VAR="LOCAL_$${DEST_NETWORK_UPPER}_CUSTOMTOKEN_CONTRACT_ADDRESS"; \
+	SOURCE_TOKEN=$${!SOURCE_TOKEN_VAR}; \
+	DEST_TOKEN=$${!DEST_TOKEN_VAR}; \
+	if [ -z "$$SOURCE_TOKEN" ] || [ -z "$$DEST_TOKEN" ]; then \
+		echo "$(RED)Error: Token addresses not found in .env for the specified networks.$(NC)"; \
+		exit 1; \
+	fi; \
+	RPC_URL_VAR="LOCAL_$${SOURCE_NETWORK_UPPER}_RPC_URL"; \
+	RPC_URL=$${!RPC_URL_VAR}; \
+	if [ -z "$$RPC_URL" ]; then \
+		echo "$(RED)Error: RPC URL for $$SOURCE_NETWORK is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Source Network: $$SOURCE_NETWORK$(NC)"; \
+	echo "$(CYAN)Debug: Destination Network: $$DEST_NETWORK$(NC)"; \
+	echo "$(CYAN)Debug: Source Token: $$SOURCE_TOKEN$(NC)"; \
+	echo "$(CYAN)Debug: Destination Token: $$DEST_TOKEN$(NC)"; \
+	SOURCE_NETWORK=$$SOURCE_NETWORK \
+	DEST_NETWORK=$$DEST_NETWORK \
+	SOURCE_TOKEN=$$SOURCE_TOKEN \
+	DEST_TOKEN=$$DEST_TOKEN \
+	forge script script/local/its/SetupTokenManagers.s.sol:SetupTokenManagersScript \
+		--rpc-url $$RPC_URL \
+		--broadcast \
+		-vvvv || { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+
+
+# # Deploy Custom Token
+# deploy-custom-token:
+# 	@echo "$(YELLOW)Deploying Custom Token...$(NC)"
+# 	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_CHAIN; \
+# 	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " DESTINATION_CHAIN; \
+# 	if ! echo "ethereum avalanche moonbeam fantom polygon" | grep -w "$$SOURCE_CHAIN" > /dev/null || \
+# 	   ! echo "ethereum avalanche moonbeam fantom polygon" | grep -w "$$DESTINATION_CHAIN" > /dev/null; then \
+# 		echo "$(RED)Error: Invalid chain name. Please choose from: ethereum, avalanche, moonbeam, fantom, polygon$(NC)"; \
+# 		exit 1; \
+# 	fi; \
+# 	read -p "Enter token name: " TOKEN_NAME; \
+# 	read -p "Enter token symbol: " TOKEN_SYMBOL; \
+# 	read -p "Enter token decimals: " TOKEN_DECIMALS; \
+# 	read -p "Enter initial token amount: " TOKEN_AMOUNT; \
+# 	source_chain_upper=$$(echo $$SOURCE_CHAIN | tr '[:lower:]' '[:upper:]'); \
+# 	destination_chain_upper=$$(echo $$DESTINATION_CHAIN | tr '[:lower:]' '[:upper:]'); \
+# 	rpc_url_var="LOCAL_$${source_chain_upper}_RPC_URL"; \
+# 	rpc_url=$${!rpc_url_var}; \
+# 	if [ -z "$$rpc_url" ]; then \
+# 		echo "$(RED)Error: RPC URL for $$SOURCE_CHAIN is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+# 		exit 1; \
+# 	fi; \
+# 	echo "$(CYAN)Debug: Source Chain: $$SOURCE_CHAIN$(NC)"; \
+# 	echo "$(CYAN)Debug: Destination Chain: $$DESTINATION_CHAIN$(NC)"; \
+# 	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+# 	echo "$(CYAN)Debug: Token Name: $$TOKEN_NAME$(NC)"; \
+# 	echo "$(CYAN)Debug: Token Symbol: $$TOKEN_SYMBOL$(NC)"; \
+# 	echo "$(CYAN)Debug: Token Decimals: $$TOKEN_DECIMALS$(NC)"; \
+# 	echo "$(CYAN)Debug: Token Amount: $$TOKEN_AMOUNT$(NC)"; \
+# 	script_path="script/local/its/CustomToken.s.sol"; \
+# 	echo "$(CYAN)Debug: Script path: $$script_path$(NC)"; \
+# 	SOURCE_CHAIN=$$SOURCE_CHAIN \
+# 	DESTINATION_CHAIN=$$DESTINATION_CHAIN \
+# 	TOKEN_NAME=$$TOKEN_NAME \
+# 	TOKEN_SYMBOL=$$TOKEN_SYMBOL \
+# 	TOKEN_DECIMALS=$$TOKEN_DECIMALS \
+# 	TOKEN_AMOUNT=$$TOKEN_AMOUNT \
+# 	forge script $$script_path:CustomTokenScript \
+# 		--rpc-url $$rpc_url \
+# 		--broadcast \
+# 		-vvvv || { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+# 	@echo "$(GREEN)Custom Token deployment and transfer completed!$(NC)"

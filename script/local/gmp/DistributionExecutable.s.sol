@@ -3,11 +3,11 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
-import "../../src/send-ack/SendAck.sol";
+import "../../../src/call-contract-with-token/DistributionExecutable.sol";
 import "./NetworkDetailsBase.sol";
 
-contract SendAckScript is Script, NetworkDetailsBase {
-    ExecutableSample public executableSample;
+contract DistributionExecutableScript is Script, NetworkDetailsBase {
+    DistributionExecutable public distributionExecutable;
 
     function run() public {
         string memory network = vm.envString("NETWORK");
@@ -26,7 +26,7 @@ contract SendAckScript is Script, NetworkDetailsBase {
         (address gateway, address gasService) = getNetworkDetails(network); 
 
         vm.startBroadcast(privateKey);
-        executableSample = new ExecutableSample(gateway, gasService);
+        distributionExecutable = new DistributionExecutable(gateway, gasService);
         vm.stopBroadcast();
     }
 }

@@ -136,7 +136,7 @@ contract InterchainTokenScript is Script {
     function validateSourceToken(
         bytes32 tokenId,
         DeploymentParams memory params
-    ) internal returns (address) {
+    ) internal view returns (address) {
         address tokenAddress = sourceIts.interchainTokenAddress(tokenId);
         require(
             tokenAddress != address(0),
@@ -234,7 +234,7 @@ contract InterchainTokenScript is Script {
     function validateDestinationToken(
         bytes32 tokenId,
         DeploymentParams memory params
-    ) internal {
+    ) internal view {
         address destTokenAddress = destinationIts.interchainTokenAddress(
             tokenId
         );
