@@ -62,21 +62,13 @@ contract SetupTokenManagersScript is Script {
 
         emit tokenManagerParamsEvent(tokenManagerParams);
 
-        // Source ITS Address: 0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A
-        //   Destination ITS Address: 0x7DaC9A4a7542D635739b43665aD49b8C7E115f0A
-        //   Source Token Address: 0x712516e61C8B383dF4A63CFe83d7701Bce54B03e
-        //   Destination Token Address: 0x712516e61C8B383dF4A63CFe83d7701Bce54B03e
-        //   Deployer address: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
-        //   Salt: 0x67cea527f4589d85ec60d75432533598e7311f59f7de765ec44ce45dcf747719
         console.log("Deploying token manager for source network...");
         try
             sourceIts.deployTokenManager(
-                bytes32(
-                    0x67cea527f4589d85ec60d75432533598e7311f59f7de765ec44ce45dcf747719
-                ),
+                salt,
                 "",
                 ITokenManagerType.TokenManagerType.MINT_BURN,
-                "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8000000000000000000000000712516e61c8b383df4a63cfe83d7701bce54b03e",
+                tokenManagerParams,
                 0
             )
         {
