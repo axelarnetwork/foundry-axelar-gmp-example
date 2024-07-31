@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
-import "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
-import "@axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
+import "@axelar-network/axelar-gmp-sdk-solidity/contracts/executable/AxelarExecutable.sol";
+import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
+import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 
 contract ExecutableSample is AxelarExecutable {
     string public value;

@@ -12,7 +12,7 @@ MAGENTA := \033[0;35m
 NC := \033[0m # No Color
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute deploy-interchain-token
+.PHONY: setup-env build deploy format test clean clean-ports rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute deploy-interchain-token
 
 # Supported networks and scripts
 NETWORKS = ethereum avalanche moonbeam fantom polygon
@@ -49,7 +49,7 @@ setup-env:
 # Install Dependencies
 install:
 	@echo "$(YELLOW)Installing dependencies...$(NC)"
-	@forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.5.2 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit & npm install
+	@forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.6.4 --no-commit && forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit && forge install foundry-rs/forge-std@v1.7.1 --no-commit && forge install axelarnetwork/interchain-token-service@v1.2.4 --no-commit & npm install
 	@echo "$(GREEN)Dependencies installed successfully!$(NC)"
 
 # Update Dependencies
@@ -200,16 +200,34 @@ execute:
 	fi
 
 # local chain targets
-local-chain-start:
+local-chain-start: clean-ports
 	@echo "$(YELLOW)Starting the local chain...$(NC)"
-	anvil &
-	anvil -p 8546 &
-	anvil -p 8547 &
-	anvil -p 8548 &
-	anvil -p 8549 &
-	sleep 10; \
-	node local/script/startLocalChain.js
+	@anvil > /dev/null 2>&1 & echo $$! > .anvil_pid
+	@anvil -p 8546 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil -p 8547 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil -p 8548 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil -p 8549 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@echo "$(CYAN)Waiting for Anvil instances to start...$(NC)"
+	@sleep 10
+	@echo "$(CYAN)Starting local chain script...$(NC)"
+	@node local/script/startLocalChain.js || (echo "$(RED)Error starting local chain. Cleaning up...$(NC)" && $(MAKE) clean-ports && exit 1)
 	@echo "$(GREEN)Local script executed successfully!$(NC)"
+
+clean-ports:
+	@echo "$(YELLOW)Cleaning up ports...$(NC)"
+	@-kill $$(lsof -t -i:8545) 2>/dev/null || true
+	@-kill $$(lsof -t -i:8546) 2>/dev/null || true
+	@-kill $$(lsof -t -i:8547) 2>/dev/null || true
+	@-kill $$(lsof -t -i:8548) 2>/dev/null || true
+	@-kill $$(lsof -t -i:8549) 2>/dev/null || true
+	@-if [ -f .anvil_pid ]; then \
+		while read pid; do \
+			kill $$pid 2>/dev/null || true; \
+		done < .anvil_pid; \
+		rm .anvil_pid; \
+	fi
+	@echo "$(GREEN)Ports cleaned up.$(NC)"
+
 
 local-chain-deploy:
 	@for network in $(NETWORKS); do \

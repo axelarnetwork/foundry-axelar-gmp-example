@@ -41,11 +41,11 @@ import { ethers } from "ethers";
 
   await setupAndExport({
     chains: [
-      { name: "Ethereum", rpcUrl: "http://localhost:8545" },
-      { name: "Avalanche", rpcUrl: "http://localhost:8546" },
-      { name: "Moonbeam", rpcUrl: "http://localhost:8547" },
-      { name: "Fantom", rpcUrl: "http://localhost:8548" },
-      { name: "Polygon", rpcUrl: "http://localhost:8549" },
+      { name: "Ethereum", rpcUrl: "http://127.0.0.1:8545" },
+      { name: "Avalanche", rpcUrl: "http://127.0.0.1:8546" },
+      { name: "Moonbeam", rpcUrl: "http://127.0.0.1:8547" },
+      { name: "Fantom", rpcUrl: "http://127.0.0.1:8548" },
+      { name: "Polygon", rpcUrl: "http://127.0.0.1:8549" },
     ],
     relayInterval: 5000,
     callback: async (chain, data) => {

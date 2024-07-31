@@ -22,7 +22,7 @@ contract CustomTokenScript is Script {
         string memory name = vm.envString("TOKEN_NAME");
         string memory symbol = vm.envString("TOKEN_SYMBOL");
         uint8 decimals = uint8(vm.envUint("TOKEN_DECIMALS"));
-        uint256 amount = vm.envUint("TOKEN_AMOUNT");
+        // uint256 amount = vm.envUint("TOKEN_AMOUNT");
 
         vm.startBroadcast(vm.envUint("LOCAL_PRIVATE_KEY"));
 

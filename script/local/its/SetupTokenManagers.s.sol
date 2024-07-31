@@ -60,7 +60,7 @@ contract SetupTokenManagersScript is Script {
 
         bytes memory tokenManagerParams = abi.encode(deployer, sourceToken);
 
-        emit tokenManagerParamsEvent(tokenManagerParams);
+        // emit tokenManagerParamsEvent(tokenManagerParams);
 
         console.log("Deploying token manager for source network...");
         try
