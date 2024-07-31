@@ -202,11 +202,11 @@ execute:
 # local chain targets
 local-chain-start: clean-ports
 	@echo "$(YELLOW)Starting the local chain...$(NC)"
-	@anvil > /dev/null 2>&1 & echo $$! > .anvil_pid
-	@anvil -p 8546 > /dev/null 2>&1 & echo $$! >> .anvil_pid
-	@anvil -p 8547 > /dev/null 2>&1 & echo $$! >> .anvil_pid
-	@anvil -p 8548 > /dev/null 2>&1 & echo $$! >> .anvil_pid
-	@anvil -p 8549 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil --silent > /dev/null 2>&1 & echo $$! > .anvil_pid
+	@anvil --silent -p 8546 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil --silent -p 8547 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil --silent -p 8548 > /dev/null 2>&1 & echo $$! >> .anvil_pid
+	@anvil --silent -p 8549 > /dev/null 2>&1 & echo $$! >> .anvil_pid
 	@echo "$(CYAN)Waiting for Anvil instances to start...$(NC)"
 	@sleep 10
 	@echo "$(CYAN)Starting local chain script...$(NC)"
