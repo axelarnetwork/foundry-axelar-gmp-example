@@ -6,6 +6,7 @@ import "forge-std/console.sol";
 import "@axelarnetwork/interchain-token-service/contracts/interfaces/IInterchainTokenService.sol";
 import "@axelarnetwork/interchain-token-service/contracts/interfaces/IInterchainTokenFactory.sol";
 import "@axelarnetwork/interchain-token-service/contracts/interfaces/IInterchainToken.sol";
+import "../../utils/StringUtils.sol";
 
 contract InterchainTokenScript is Script {
     IInterchainTokenService public sourceIts;
@@ -174,7 +175,7 @@ contract InterchainTokenScript is Script {
             "",
             params.salt,
             params.deployer,
-            toTitleCase(params.destinationChain),
+            StringUtils.toTitleCase(params.destinationChain),
             FEE
         );
 
@@ -211,7 +212,7 @@ contract InterchainTokenScript is Script {
 
         sourceIts.interchainTransfer{value: FEE}(
             tokenId,
-            toTitleCase(params.destinationChain),
+            StringUtils.toTitleCase(params.destinationChain),
             abi.encodePacked(params.deployer),
             transferAmount,
             "",
@@ -263,23 +264,5 @@ contract InterchainTokenScript is Script {
         address tokenManager = destinationIts.tokenManagerAddress(tokenId);
         console.log("Token Manager address: %s", tokenManager);
         require(tokenManager != address(0), "Token Manager not set");
-    }
-
-    function toTitleCase(
-        string memory str
-    ) internal pure returns (string memory) {
-        bytes memory bStr = bytes(str);
-        bytes memory bLower = new bytes(bStr.length);
-        for (uint i = 0; i < bStr.length; i++) {
-            if ((uint8(bStr[i]) >= 65) && (uint8(bStr[i]) <= 90)) {
-                bLower[i] = bytes1(uint8(bStr[i]) + 32);
-            } else {
-                bLower[i] = bStr[i];
-            }
-        }
-        if (bLower.length > 0) {
-            bLower[0] = bytes1(uint8(bLower[0]) - 32);
-        }
-        return string(bLower);
     }
 }
