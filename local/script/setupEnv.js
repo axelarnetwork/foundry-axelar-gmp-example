@@ -2,34 +2,31 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
-// Get the directory name of the current module
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const rootDir = join(__dirname, "..", "..");
 const envPath = join(rootDir, ".env");
 const envExamplePath = join(rootDir, ".env.example");
 
 function initializeEnvFile() {
-  console.log("Copying .env.example to .env");
-
-  let contents;
+  console.log("Initializing .env file...");
   try {
-    contents = readFileSync(envExamplePath, "utf8");
+    const contents = readFileSync(envExamplePath, "utf8");
+    writeFileSync(envPath, contents);
+    console.log(".env file created successfully in the root directory.");
   } catch (error) {
-    console.error(`Error reading .env.example: ${error.message}`);
-    return;
+    console.error(`Error initializing .env file: ${error.message}`);
+    process.exit(1);
   }
-
-  // Copy .env.example contents to .env
-  console.log("Creating .env file in the root directory.");
-  writeFileSync(envPath, contents);
 }
 
-// Main script execution
-if (!existsSync(envPath)) {
-  initializeEnvFile();
-} else {
-  console.log(
-    "A .env file already exists in the root directory, not modifying it."
-  );
+function main() {
+  if (!existsSync(envPath)) {
+    initializeEnvFile();
+  } else {
+    console.log(
+      "A .env file already exists in the root directory. No changes made."
+    );
+  }
 }
+
+main();
