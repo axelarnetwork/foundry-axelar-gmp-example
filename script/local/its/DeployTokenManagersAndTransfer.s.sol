@@ -8,7 +8,7 @@ import "@axelarnetwork/interchain-token-service/contracts/interfaces/ITokenManag
 import "../../../src/its-custom-token/CustomToken.sol";
 import "../../utils/StringUtils.sol";
 
-contract SetupTokenManagersScript is Script {
+contract DeployTokenManagersAndTransferScript is Script {
     struct NetworkInfo {
         string name;
         address itsAddress;

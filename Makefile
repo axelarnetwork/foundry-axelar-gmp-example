@@ -12,7 +12,7 @@ MAGENTA := \033[0;35m
 NC := \033[0m # No Color
 
 # PHONY Targets declaration
-.PHONY: setup-env build deploy format test clean clean-ports rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute deploy-interchain-token
+.PHONY: setup-env build deploy format test clean clean-ports rpc help all install update execute local-chain-deploy local-chain-start local-chain-execute deploy-interchain-token setup-token-managers-and-transfer
 
 # Supported networks and scripts
 NETWORKS = ethereum avalanche moonbeam fantom polygon
@@ -432,7 +432,7 @@ deploy-interchain-token:
 	@echo "$(GREEN)Interchain Token deployment and transfer completed!$(NC)"
 
 
-setup-token-managers:
+setup-token-managers-and-transfer:
 	@echo "$(YELLOW)Setting up Token Managers...$(NC)"
 	@read -p "Enter source network (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_NETWORK; \
 	read -p "Enter destination network (ethereum, avalanche, moonbeam, fantom, polygon): " DEST_NETWORK; \
@@ -466,51 +466,7 @@ setup-token-managers:
 	DEST_TOKEN=$$DEST_TOKEN \
 	MINT_AMOUNT=$$MINT_AMOUNT \
 	TRANSFER_AMOUNT=$$TRANSFER_AMOUNT \
-	forge script script/local/its/SetupTokenManagers.s.sol:SetupTokenManagersScript \
+	forge script script/local/its/DeployTokenManagersAndTransfer.s.sol:DeployTokenManagersAndTransferScript \
 		--rpc-url $$RPC_URL \
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
-
-
-# # Deploy Custom Token
-# deploy-custom-token:
-# 	@echo "$(YELLOW)Deploying Custom Token...$(NC)"
-# 	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_CHAIN; \
-# 	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " DESTINATION_CHAIN; \
-# 	if ! echo "ethereum avalanche moonbeam fantom polygon" | grep -w "$$SOURCE_CHAIN" > /dev/null || \
-# 	   ! echo "ethereum avalanche moonbeam fantom polygon" | grep -w "$$DESTINATION_CHAIN" > /dev/null; then \
-# 		echo "$(RED)Error: Invalid chain name. Please choose from: ethereum, avalanche, moonbeam, fantom, polygon$(NC)"; \
-# 		exit 1; \
-# 	fi; \
-# 	read -p "Enter token name: " TOKEN_NAME; \
-# 	read -p "Enter token symbol: " TOKEN_SYMBOL; \
-# 	read -p "Enter token decimals: " TOKEN_DECIMALS; \
-# 	read -p "Enter initial token amount: " TOKEN_AMOUNT; \
-# 	source_chain_upper=$$(echo $$SOURCE_CHAIN | tr '[:lower:]' '[:upper:]'); \
-# 	destination_chain_upper=$$(echo $$DESTINATION_CHAIN | tr '[:lower:]' '[:upper:]'); \
-# 	rpc_url_var="LOCAL_$${source_chain_upper}_RPC_URL"; \
-# 	rpc_url=$${!rpc_url_var}; \
-# 	if [ -z "$$rpc_url" ]; then \
-# 		echo "$(RED)Error: RPC URL for $$SOURCE_CHAIN is not set in .env. Please set the RPC URL for your network.$(NC)"; \
-# 		exit 1; \
-# 	fi; \
-# 	echo "$(CYAN)Debug: Source Chain: $$SOURCE_CHAIN$(NC)"; \
-# 	echo "$(CYAN)Debug: Destination Chain: $$DESTINATION_CHAIN$(NC)"; \
-# 	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
-# 	echo "$(CYAN)Debug: Token Name: $$TOKEN_NAME$(NC)"; \
-# 	echo "$(CYAN)Debug: Token Symbol: $$TOKEN_SYMBOL$(NC)"; \
-# 	echo "$(CYAN)Debug: Token Decimals: $$TOKEN_DECIMALS$(NC)"; \
-# 	echo "$(CYAN)Debug: Token Amount: $$TOKEN_AMOUNT$(NC)"; \
-# 	script_path="script/local/its/CustomToken.s.sol"; \
-# 	echo "$(CYAN)Debug: Script path: $$script_path$(NC)"; \
-# 	SOURCE_CHAIN=$$SOURCE_CHAIN \
-# 	DESTINATION_CHAIN=$$DESTINATION_CHAIN \
-# 	TOKEN_NAME=$$TOKEN_NAME \
-# 	TOKEN_SYMBOL=$$TOKEN_SYMBOL \
-# 	TOKEN_DECIMALS=$$TOKEN_DECIMALS \
-# 	TOKEN_AMOUNT=$$TOKEN_AMOUNT \
-# 	forge script $$script_path:CustomTokenScript \
-# 		--rpc-url $$rpc_url \
-# 		--broadcast \
-# 		-vvvv || { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
-# 	@echo "$(GREEN)Custom Token deployment and transfer completed!$(NC)"
