@@ -256,7 +256,7 @@ local-chain-deploy:
 				export TOKEN_NAME="CustomToken"; \
 				export TOKEN_SYMBOL="CT"; \
 				export TOKEN_DECIMALS=18; \
-				export TOKEN_AMOUNT=1000000000000000000000; \
+				export TOKEN_AMOUNT=10000000000000000000000; \
 			else \
 				echo "$(RED)Error: Unsupported script $$script.$(NC)"; \
 				exit 1; \
@@ -436,6 +436,8 @@ setup-token-managers:
 	@echo "$(YELLOW)Setting up Token Managers...$(NC)"
 	@read -p "Enter source network (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_NETWORK; \
 	read -p "Enter destination network (ethereum, avalanche, moonbeam, fantom, polygon): " DEST_NETWORK; \
+	read -p "Enter amount to mint: " MINT_AMOUNT; \
+	read -p "Enter amount to transfer: " TRANSFER_AMOUNT; \
 	SOURCE_NETWORK_UPPER=$$(echo $$SOURCE_NETWORK | tr '[:lower:]' '[:upper:]'); \
 	DEST_NETWORK_UPPER=$$(echo $$DEST_NETWORK | tr '[:lower:]' '[:upper:]'); \
 	SOURCE_TOKEN_VAR="LOCAL_$${SOURCE_NETWORK_UPPER}_CUSTOMTOKEN_CONTRACT_ADDRESS"; \
@@ -456,14 +458,18 @@ setup-token-managers:
 	echo "$(CYAN)Debug: Destination Network: $$DEST_NETWORK$(NC)"; \
 	echo "$(CYAN)Debug: Source Token: $$SOURCE_TOKEN$(NC)"; \
 	echo "$(CYAN)Debug: Destination Token: $$DEST_TOKEN$(NC)"; \
+	echo "$(CYAN)Debug: Mint Amount: $$MINT_AMOUNT$(NC)"; \
+	echo "$(CYAN)Debug: Transfer Amount: $$TRANSFER_AMOUNT$(NC)"; \
 	SOURCE_NETWORK=$$SOURCE_NETWORK \
 	DEST_NETWORK=$$DEST_NETWORK \
 	SOURCE_TOKEN=$$SOURCE_TOKEN \
 	DEST_TOKEN=$$DEST_TOKEN \
+	MINT_AMOUNT=$$MINT_AMOUNT \
+	TRANSFER_AMOUNT=$$TRANSFER_AMOUNT \
 	forge script script/local/its/SetupTokenManagers.s.sol:SetupTokenManagersScript \
 		--rpc-url $$RPC_URL \
 		--broadcast \
-		-vvvv || { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
 
 
 # # Deploy Custom Token
