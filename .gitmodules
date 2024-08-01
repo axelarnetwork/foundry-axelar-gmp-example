@@ -6,7 +6,7 @@
 	url = https://github.com/axelarnetwork/axelar-gmp-sdk-solidity
 [submodule "lib/axelar-local-dev"]
 	path = lib/axelar-local-dev
-	url = https://github.com/axelar-network/axelar-local-dev
+	url = https://github.com/axelarnetwork/axelar-local-dev
 [submodule "lib/openzeppelin-contracts"]
 	path = lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
