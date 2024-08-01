@@ -27,7 +27,7 @@
     "tokens": {
       "aUSDC": "aUSDC"
     },
-    "rpc": "http://localhost:8545"
+    "rpc": "http://127.0.0.1:8545"
   },
   {
     "name": "Avalanche",
@@ -57,7 +57,7 @@
     "tokens": {
       "aUSDC": "aUSDC"
     },
-    "rpc": "http://localhost:8546"
+    "rpc": "http://127.0.0.1:8546"
   },
   {
     "name": "Moonbeam",
@@ -87,7 +87,7 @@
     "tokens": {
       "aUSDC": "aUSDC"
     },
-    "rpc": "http://localhost:8547"
+    "rpc": "http://127.0.0.1:8547"
   },
   {
     "name": "Fantom",
@@ -117,7 +117,7 @@
     "tokens": {
       "aUSDC": "aUSDC"
     },
-    "rpc": "http://localhost:8548"
+    "rpc": "http://127.0.0.1:8548"
   },
   {
     "name": "Polygon",
@@ -147,6 +147,6 @@
     "tokens": {
       "aUSDC": "aUSDC"
     },
-    "rpc": "http://localhost:8549"
+    "rpc": "http://127.0.0.1:8549"
   }
 ]
