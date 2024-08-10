@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.0;
 
 import {InterchainTokenStandard} from "@axelar-network/interchain-token-service/contracts/interchain-token/InterchainTokenStandard.sol";

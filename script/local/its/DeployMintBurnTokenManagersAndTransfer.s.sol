@@ -7,8 +7,9 @@ import "@axelarnetwork/interchain-token-service/contracts/interfaces/IInterchain
 import "@axelarnetwork/interchain-token-service/contracts/interfaces/ITokenManagerType.sol";
 import "../../../src/its-custom-token/CustomToken.sol";
 import "../../utils/StringUtils.sol";
+import "../../utils/InterchainTransferUtils.sol";
 
-contract DeployTokenManagersAndTransferScript is Script {
+contract DeployMintBurnTokenManagersAndTransferScript is Script {
     struct NetworkInfo {
         string name;
         address itsAddress;
@@ -85,7 +86,7 @@ contract DeployTokenManagersAndTransferScript is Script {
         );
 
         console.log("\n==== Initiating Interchain Transfer ====");
-        performInterchainTransfer(
+        InterchainTransferUtils.performInterchainTransfer(
             sourceIts,
             tokenId,
             dest.name,
@@ -269,35 +270,6 @@ contract DeployTokenManagersAndTransferScript is Script {
             } else {
                 console.log("Unable to decode error data");
             }
-        }
-    }
-
-    function performInterchainTransfer(
-        IInterchainTokenService its,
-        bytes32 tokenId,
-        string memory destinationChain,
-        address recipient,
-        uint256 amount
-    ) internal {
-        console.log("Performing interchain transfer...");
-        try
-            its.interchainTransfer(
-                tokenId,
-                StringUtils.toTitleCase(destinationChain),
-                abi.encodePacked(recipient),
-                amount,
-                "",
-                0
-            )
-        {
-            console.log("Interchain transfer initiated successfully");
-        } catch Error(string memory reason) {
-            console.log("Failed to initiate interchain transfer: %s", reason);
-            revert(reason);
-        } catch (bytes memory lowLevelData) {
-            console.logBytes(lowLevelData);
-            console.log("Low-level error initiating interchain transfer");
-            revert("Low-level error in interchain transfer");
         }
     }
 }
