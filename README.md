@@ -12,9 +12,9 @@ In this example, the supported testnet networks are
 
 Note: Additional networks can be added based on your specific needs.
 
-# Getting Started
+## Getting Started
 
-## Requirements
+### Requirements
 
 - [Foundry](https://getfoundry.sh/): Confirm installation by running `forge --version` and you should see a response like
 
@@ -83,9 +83,9 @@ The repository provides a set of Makefile commands to facilitate common tasks:
 19. `make deploy-canonical-token`: Deploy a canonical token.
 20. `make help`: Display the help menu with available commands and descriptions.
 
-# Local
+## Local
 
-## Start the Local Chains
+### Start the Local Chains
 
 To get started in testing Axelar GMP locally, you need to start local chains with the following command:
 
@@ -95,7 +95,7 @@ make local-chain-start
 
 Leave this node running on a separate terminal before deploying and testing the dApp.
 
-## Deployment
+### Deployment
 
 To deploy the contracts (`ExecutableSample,` `DistributionExecutable` etc.) locally, you need to run the following command:
 
@@ -103,7 +103,7 @@ To deploy the contracts (`ExecutableSample,` `DistributionExecutable` etc.) loca
 make local-chain-deploy
 ```
 
-## Execution
+### Execution
 
 - [Call Contract Example](./src/call-contract)
 - [Call Contract with Token Example](./src/call-contract-with-token)
@@ -112,7 +112,7 @@ make local-chain-deploy
 - [Canonical Token Deployment Example](./src/its-canonical-token)
 - [Interchain Custom Token Example](./src/its-interchain-token)
 
-# Testnet
+## Testnet
 
 Update the `TESTNET_PRIVATE_KEY` variable with your private key in your `.env`
 
@@ -122,7 +122,7 @@ TESTNET_PRIVATE_KEY=0xYOUR_KEY_HERE
 
 > ⚠️ WARNING: Never commit your`TESTNET_PRIVATE_KEY` to any public repository or share it with anyone. Exposing your private key compromises the security of your assets and can result in loss or theft. Always keep it confidential and store it securely. If you believe your private key has been exposed, take immediate action to secure your accounts.
 
-## Deployment
+### Deployment
 
 To deploy to any of your preferred test networks this project supports, ensure you have tokens from a faucet for the respective network. You can acquire faucet tokens for the Polygon Mumbai testnet [here](https://faucet.polygon.technology/), for Avalanche [here](https://docs.avax.network/build/dapp/smart-contracts/get-funds-faucet), and for Moonbeam [here](https://faucet.moonbeam.network/). For Fantom, [here](https://faucet.fantom.network/) and for Ethereum Sepolia, use this [link](https://www.alchemy.com/faucets/ethereum-sepolia). Ensure these tokens are in the account linked to the private key you provided in your `.env` file.
 
@@ -142,7 +142,7 @@ make deploy NETWORK=polygon SCRIPT=ExecutableSample
 
 The above command deploys the `ExecutableSample` contract to the Polygon Mumbai testnet. This script can also be used to target other contracts within the project.
 
-## Execution
+### Execution
 
 To send a message using Axelar GMP is quite simple; what is required is to run `make execute` and pass the appropriate parameters needed, and you will be able to test the contract deployed.
 
