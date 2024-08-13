@@ -381,9 +381,9 @@ local-chain-execute:
 			$(SRC_ADDRESS) "sendToMany(string,string,address[],string,uint256)" \
 			"$(TO)" "$(DEST_ADDRESS)" "$(DEST_ADDRESSES)" "aUSDC" "$(AMOUNT_IN_WEI)" \
 			--value $(VALUE_IN_WEI) && echo "$(GREEN)Transaction sent successfully.$(NC)" || echo "$(RED)Failed to send transaction.$(NC)"; \
-		echo "$(YELLOW)Checking final balance for the account making the request...$(NC)"; \
+		echo "$(YELLOW)Checking final balance for the account to recieve the aUSDC...$(NC)"; \
 		sleep 10; \
-		echo "$(YELLOW)Checking final aUSDC balance for the account making the request...$(NC)"; \
+		echo "$(YELLOW)Checking final aUSDC balance for the account to recieve the aUSDC...$(NC)"; \
 		cast call $(USDC_ADDRESS) "balanceOf(address)(uint256)" "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" --rpc-url $(DEST_RPC_URL) || echo "$(RED)Failed to read initial balance from USDC contract.$(NC)"; \
 	else \
 		echo "$(RED)Unsupported script $(SCRIPT).$(NC)"; \
@@ -466,7 +466,44 @@ setup-token-managers-and-transfer:
 	DEST_TOKEN=$$DEST_TOKEN \
 	MINT_AMOUNT=$$MINT_AMOUNT \
 	TRANSFER_AMOUNT=$$TRANSFER_AMOUNT \
-	forge script script/local/its/DeployTokenManagersAndTransfer.s.sol:DeployTokenManagersAndTransferScript \
+	forge script script/local/its/DeployMintBurnTokenManagersAndTransfer.s.sol:DeployMintBurnTokenManagersAndTransferScript \
 		--rpc-url $$RPC_URL \
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+
+deploy-canonical-token:
+	@echo "$(YELLOW)Deploying Canonical Token...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " source_chain; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " destination_chain; \
+	read -p "Enter token name: " token_name; \
+	read -p "Enter token symbol: " token_symbol; \
+	read -p "Enter token decimals: " token_decimals; \
+	read -p "Enter initial token amount: " token_amount; \
+	source_chain_upper=$$(echo $$source_chain | tr '[:lower:]' '[:upper:]'); \
+	destination_chain_upper=$$(echo $$destination_chain | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="LOCAL_$${source_chain_upper}_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$source_chain is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Source Chain: $$source_chain_upper$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$destination_chain_upper$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Token Name: $$token_name$(NC)"; \
+	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
+	echo "$(CYAN)Debug: Token Decimals: $$token_decimals$(NC)"; \
+	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
+	script_path="script/local/its/CanonicalToken.s.sol"; \
+	echo "$(CYAN)Debug: Script path: $$script_path$(NC)"; \
+	SOURCE_CHAIN=$$source_chain_upper \
+	DESTINATION_CHAIN=$$destination_chain_upper \
+	TOKEN_NAME=$$token_name \
+	TOKEN_SYMBOL=$$token_symbol \
+	TOKEN_DECIMALS=$$token_decimals \
+	TOKEN_AMOUNT=$$token_amount \
+	forge script $$script_path:CanonicalTokenScript \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Canonical Token deployment, registration, and transfer completed!$(NC)"
