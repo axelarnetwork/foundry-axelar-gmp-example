@@ -38,10 +38,19 @@ all: clean setup-env install build
 
 setup-env:
 	@if [ ! -f .env ]; then \
-		echo "$(YELLOW)⤵ Reading .env.example.$(NC)"; \
-		node env-setup/setupEnv.js; \
-		echo "$(YELLOW)⤵ Creating .env file.$(NC)"; \
-		echo "$(GREEN)📨 Created .env file successfully!$(NC)"; \
+		if [ -f .env.example ]; then \
+			echo "$(YELLOW)⤵ Reading .env.example.$(NC)"; \
+			node env-setup/setupEnv.js; \
+			if [ $$? -eq 0 ]; then \
+				echo "$(YELLOW)⤵ Creating .env file.$(NC)"; \
+				echo "$(GREEN)📨 Created .env file successfully!$(NC)"; \
+			else \
+				echo "$(RED)Error: Failed to create .env file. Check the setupEnv.js script.$(NC)"; \
+			fi; \
+		else \
+			echo "$(RED)Error: .env.example file not found. Please create a .env.example file first.$(NC)"; \
+			exit 1; \
+		fi; \
 	else \
 		echo "$(BLUE)A .env file already exists, not modifying it.$(NC)"; \
 	fi
