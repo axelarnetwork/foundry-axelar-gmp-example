@@ -39,7 +39,7 @@ all: clean setup-env install build
 setup-env:
 	@if [ ! -f .env ]; then \
 		echo "$(YELLOW)⤵ Reading .env.example.$(NC)"; \
-		node local/script/setupEnv.js; \
+		node env-setup/setupEnv.js; \
 		echo "$(YELLOW)⤵ Creating .env file.$(NC)"; \
 		echo "$(GREEN)📨 Created .env file successfully!$(NC)"; \
 	else \
@@ -220,7 +220,7 @@ local-chain-start: clean-ports
 	@echo "$(CYAN)Waiting for Anvil instances to start...$(NC)"
 	@sleep 10
 	@echo "$(CYAN)Starting local chain script...$(NC)"
-	@node local/script/startLocalChain.js || (echo "$(RED)Error starting local chain. Cleaning up...$(NC)" && $(MAKE) clean-ports && exit 1)
+	@node env-setup/startLocalChain.js || (echo "$(RED)Error starting local chain. Cleaning up...$(NC)" && $(MAKE) clean-ports && exit 1)
 	@echo "$(GREEN)Local script executed successfully!$(NC)"
 
 clean-ports:
@@ -432,7 +432,7 @@ deploy-interchain-token:
 	@echo "$(GREEN)Interchain Token deployment and transfer completed!$(NC)"
 
 
-setup-token-managers-and-transfer:
+deploy-mint-burn-token-manager-and-transfer:
 	@echo "$(YELLOW)Setting up Token Managers...$(NC)"
 	@read -p "Enter source network (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_NETWORK; \
 	read -p "Enter destination network (ethereum, avalanche, moonbeam, fantom, polygon): " DEST_NETWORK; \
