@@ -12,17 +12,17 @@ make local-chain-execute FROM={srcChain} TO={destChain} SCRIPT={script} VALUE={g
 
 ## Parameters
 
-`srcChain`: The blockchain network from which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
+- `srcChain`: The blockchain network from which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
 
-`destChain`: The blockchain network to which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
+- `destChain`: The blockchain network to which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
 
-`script`: The contract to execute on the blockchain network.
+- `script`: The contract to execute on the blockchain network.
 
-`gasValue`: The gas amount to pay for cross-chain interactions.
+- `gasValue`: The gas amount to pay for cross-chain interactions.
 
-`amount`: The amount of aUSDC to be transferred and distributed among the specified accounts.
+- `amount`: The amount of aUSDC to be transferred and distributed among the specified accounts.
 
-`destinationAddresses`: The addresses to receive aUSDC.
+- `destinationAddresses`: The addresses to receive aUSDC.
 
 ## Example
 

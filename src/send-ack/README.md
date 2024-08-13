@@ -10,19 +10,19 @@ To execute the example, use the following command:
 make local-chain-execute FROM={srcChain} TO={destChain} SCRIPT={script} VALUE={gasValue} MESSAGE={message}
 ```
 
-#### Parameters
+## Parameters
 
-`srcChain`: The blockchain network from which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
+- `srcChain`: The blockchain network from which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
 
-`destChain`: The blockchain network to which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
+- `destChain`: The blockchain network to which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
 
-`script`: The contract to execute on the blockchain network.
+- `script`: The contract to execute on the blockchain network.
 
-`gasValue`: The gas amount to pay for cross-chain interactions.
+- `gasValue`: The gas amount to pay for cross-chain interactions.
 
-`message`: The message to be relayed between the chains.
+- `message`: The message to be relayed between the chains.
 
-#### Example
+## Example
 
 This example sends "Hello" from Fantom and gets an acknowledgment message "World" from Polygon.
 
