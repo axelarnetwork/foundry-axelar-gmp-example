@@ -79,7 +79,7 @@ The repository provides a set of Makefile commands to facilitate common tasks:
 15. `make local-chain-deploy`: Deploy all contracts to local chains.
 16. `make local-chain-execute`: Execute commands to test GMP (General Message Passing).
 17. `make deploy-interchain-token`: Deploy an interchain token.
-18. `make setup-token-managers-and-transfer`: Set up token managers and perform a transfer.
+18. `make deploy-mint-burn-token-manager-and-transfer`: Set up token managers and perform a transfer.
 19. `make deploy-canonical-token`: Deploy a canonical token.
 20. `make help`: Display the help menu with available commands and descriptions.
 
@@ -108,9 +108,9 @@ make local-chain-deploy
 - [Call Contract Example](./src/call-contract/README.md)
 - [Call Contract with Token Example](./src/call-contract-with-token/README.md)
 - [Send Ack Example](./src/send-ack/README.md)
-- [New Interchain Token Example](./src/new-interchain-token/README.md)
-- [Canonical Token Deployment Example](./src/canonical-token/README.md)
-- 
+- [New Interchain Token Example](./src/its-interchain-token/README.md)
+- [Canonical Token Deployment Example](./src/its-canonical-token/README.md)
+- [Interchain Custom Token Example](./src/its-interchain-token/README.md)
 
 # Testnet
 
