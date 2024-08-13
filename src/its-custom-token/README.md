@@ -14,14 +14,14 @@ make deploy-mint-burn-token-manager-and-transfer
 
 The command will prompt you for the following information:
 
-### Parameters
+## Parameters
 
 - `SOURCE_NETWORK`: The blockchain network where the source custom token is deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
 - `DEST_NETWORK`: The blockchain network where the destination custom token is deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
 - `MINT_AMOUNT`: The amount of tokens to mint on the source chain.
 - `TRANSFER_AMOUNT`: The amount of tokens to transfer from the source chain to the destination chain.
 
-### Example
+## Example
 
 Here's an example of how you might respond to the prompts:
 
@@ -32,14 +32,14 @@ Enter amount to mint: 1000
 Enter amount to transfer: 500
 ```
 
-### Process
+## Process
 
 1. The script will retrieve the addresses of the custom tokens from the `.env` file for both the source and destination networks.
 2. It will then set up mint/burn token managers for both the source and destination tokens.
 3. The specified amount of tokens will be approved and minted on the source chain.
 4. Finally, it will transfer the specified amount of tokens from the source chain to the destination chain.
 
-### Output
+## Output
 
 The output will show debug information and the progress of the token manager setup, approval minting, and transfer process. A successful execution will end with a message indicating that the Forge script execution was successful.
 

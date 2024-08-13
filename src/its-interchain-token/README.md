@@ -14,7 +14,7 @@ make deploy-interchain-token
 
 The command will prompt you for the following information:
 
-### Parameters
+## Parameters
 
 - `source_chain`: The blockchain network where the token will be initially deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
 - `destination_chain`: The blockchain network to which the token will be transferred. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
@@ -22,8 +22,8 @@ The command will prompt you for the following information:
 - `token_symbol`: The symbol for your interchain token.
 - `token_decimals`: The number of decimal places for your token.
 - `token_amount`: The initial amount of tokens to mint.
-
-### Example
+  
+## Example
 
 Here's an example of how you might respond to the prompts:
 
@@ -36,13 +36,13 @@ Enter token decimals: 18
 Enter initial token amount: 1000
 ```
 
-### Process
+## Process
 
 1. The script will use the provided information to deploy the `InterchainToken` contract on the source chain.
 2. It will then register the token with the Interchain Token Service.
 3. Finally, it will transfer the specified amount of tokens from the source chain to the destination chain.
 
-### Output
+## Output
 
 The output will show debug information and the progress of the deployment and transfer process. A successful execution will end with:
 

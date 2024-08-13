@@ -58,7 +58,7 @@ make all
 
 The command above will install the required dependencies, create a `.env` file from `.env.example`, and update and build the project.
 
-# Available Tasks on the Repository
+## Available Commands
 
 The repository provides a set of Makefile commands to facilitate common tasks:
 
@@ -105,12 +105,12 @@ make local-chain-deploy
 
 ## Execution
 
-- [Call Contract Example](./src/call-contract/README.md)
-- [Call Contract with Token Example](./src/call-contract-with-token/README.md)
+- [Call Contract Example](./src/call-contract)
+- [Call Contract with Token Example](./src/call-contract-with-token)
 - [Send Ack Example](./src/send-ack/README.md)
-- [New Interchain Token Example](./src/its-interchain-token/README.md)
-- [Canonical Token Deployment Example](./src/its-canonical-token/README.md)
-- [Interchain Custom Token Example](./src/its-interchain-token/README.md)
+- [New Interchain Token Example](./src/its-interchain-token)
+- [Canonical Token Deployment Example](./src/its-canonical-token)
+- [Interchain Custom Token Example](./src/its-interchain-token)
 
 # Testnet
 

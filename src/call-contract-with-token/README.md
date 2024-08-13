@@ -10,7 +10,7 @@ To execute the example, use the following command:
 make local-chain-execute FROM={srcChain} TO={destChain} SCRIPT={script} VALUE={gasValue} AMOUNT={amount} DEST_ADDRESSES={destinationAddresses}
 ```
 
-#### Parameters
+## Parameters
 
 `srcChain`: The blockchain network from which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
 
@@ -24,7 +24,7 @@ make local-chain-execute FROM={srcChain} TO={destChain} SCRIPT={script} VALUE={g
 
 `destinationAddresses`: The addresses to receive aUSDC.
 
-#### Example
+## Example
 
 This example sends specified aUSDC amount from Fantom to Polygon.
 

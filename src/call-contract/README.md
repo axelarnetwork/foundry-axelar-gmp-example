@@ -10,7 +10,7 @@ To execute the example, use the following command:
 make local-chain-execute FROM={srcChain} TO={destChain} SCRIPT={script} VALUE={gasValue} MESSAGE={message}
 ```
 
-#### Parameters
+## Parameters
 
 `srcChain`: The blockchain network from which the message will be relayed. Acceptable values include "Moonbeam", "Avalanche", "Fantom", "Ethereum", and "Polygon".
 
@@ -22,7 +22,7 @@ make local-chain-execute FROM={srcChain} TO={destChain} SCRIPT={script} VALUE={g
 
 `message`: The message to be relayed between the chains.
 
-#### Example
+## Example
 
 This example relays the message "Hello World" from Fantom to Polygon.
 
