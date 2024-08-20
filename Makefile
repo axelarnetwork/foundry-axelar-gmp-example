@@ -523,9 +523,9 @@ execute-gmp-on-testnet:
 	fi
 
 # Interchain Token Service Deployment on Testnet
-# Deploy Canonical Token to testnet
+# Deploy and register canonical token on testnet
 deploy-canonical-token-testnet:
-	@echo "$(YELLOW)Deploying Canonical Token to testnet...$(NC)"
+	@echo "$(YELLOW)Deploying and Registering Canonical Token on testnet...$(NC)"
 	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
 	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
 	read -p "Enter token name: " token_name; \
@@ -552,8 +552,41 @@ deploy-canonical-token-testnet:
 	TOKEN_SYMBOL=$$token_symbol \
 	TOKEN_DECIMALS=$$token_decimals \
 	TOKEN_AMOUNT=$$token_amount \
-	forge script script/testnet/its/CanonicalToken.s.sol:CanonicalTokenScript \
+	forge script script/testnet/its/CanonicalToken.s.sol:CanonicalTokenScript --sig "deploy()" \
 		--rpc-url $$rpc_url \
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
-	@echo "$(GREEN)Canonical Token deployment to testnet completed!$(NC)"
+	@echo "$(GREEN)Canonical Token deployment and registration completed!$(NC)"
+	@echo "$(YELLOW)Please note down the Canonical Token Address and Token ID for the transfer step.$(NC)"
+
+# Perform interchain transfer of canonical token on testnet
+transfer-canonical-token-testnet:
+	@echo "$(YELLOW)Performing Interchain Transfer of Canonical Token on testnet...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
+	read -p "Enter canonical token address: " token_address; \
+	read -p "Enter token ID: " token_id; \
+	read -p "Enter amount to transfer: " transfer_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="$${network_upper}_TESTNET_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$dest_chain$(NC)"; \
+	echo "$(CYAN)Debug: Canonical Token Address: $$token_address$(NC)"; \
+	echo "$(CYAN)Debug: Token ID: $$token_id$(NC)"; \
+	echo "$(CYAN)Debug: Transfer Amount: $$transfer_amount$(NC)"; \
+	NETWORK=$$network \
+	DESTINATION_CHAIN=$$dest_chain \
+	CANONICAL_TOKEN_ADDRESS=$$token_address \
+	TOKEN_ID=$$token_id \
+	TOKEN_AMOUNT=$$transfer_amount \
+	forge script script/testnet/its/CanonicalToken.s.sol:CanonicalTokenScript --sig "transfer()" \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Interchain transfer of Canonical Token completed!$(NC)"

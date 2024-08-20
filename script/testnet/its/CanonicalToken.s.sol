@@ -9,13 +9,13 @@ import "@axelarnetwork/interchain-token-service/contracts/interfaces/IInterchain
 import "../../utils/StringUtils.sol";
 import "../../../src/its-canonical-token/CanonicalToken.sol";
 
+/// @title CanonicalTokenScript
+/// @notice Script for deploying and transferring canonical tokens across chains
 contract CanonicalTokenScript is Script {
     IInterchainTokenService public sourceIts;
     IInterchainTokenFactory public sourceFactory;
     IInterchainTokenService public destinationIts;
 
-    uint256 constant WAIT_TIME = 60; // Increased for testnet
-    uint256 constant TRANSFER_PERCENTAGE = 50; // 50%
     uint256 constant FEE = 0.01 ether; // Adjust as needed for testnet
 
     struct DeploymentParams {
@@ -31,10 +31,29 @@ contract CanonicalTokenScript is Script {
         address deployer;
     }
 
-    function run() public {
-        deployTokens(getDeploymentParams());
+    struct TransferParams {
+        string sourceChain;
+        string destinationChain;
+        address sourceItsAddress;
+        address canonicalTokenAddress;
+        bytes32 tokenId;
+        uint256 amount;
+        address deployer;
     }
 
+    /// @notice Deploy and register a new canonical token
+    function deploy() public {
+        DeploymentParams memory params = getDeploymentParams();
+        deployAndRegister(params);
+    }
+
+    /// @notice Transfer tokens across chains
+    function transfer() public {
+        TransferParams memory params = getTransferParams();
+        performInterchainTransfer(params);
+    }
+
+    /// @notice Get deployment parameters from environment variables
     function getDeploymentParams()
         internal
         view
@@ -60,21 +79,42 @@ contract CanonicalTokenScript is Script {
         return params;
     }
 
-    function deployTokens(DeploymentParams memory params) internal {
+    /// @notice Get transfer parameters from environment variables
+    function getTransferParams() internal view returns (TransferParams memory) {
+        TransferParams memory params;
+        params.sourceChain = vm.envString("NETWORK");
+        params.destinationChain = vm.envString("DESTINATION_CHAIN");
+        params.sourceItsAddress = vm.envAddress(
+            "TESTNET_INTERCHAIN_TOKEN_SERVICE"
+        );
+        params.canonicalTokenAddress = vm.envAddress("CANONICAL_TOKEN_ADDRESS");
+        params.tokenId = bytes32(vm.envBytes32("TOKEN_ID"));
+        params.amount = vm.envUint("TOKEN_AMOUNT") * 1e18;
+        params.deployer = vm.addr(vm.envUint("TESTNET_PRIVATE_KEY"));
+        return params;
+    }
+
+    /// @notice Deploy and register a new canonical token
+    function deployAndRegister(DeploymentParams memory params) internal {
         sourceIts = IInterchainTokenService(params.sourceItsAddress);
         sourceFactory = IInterchainTokenFactory(params.sourceFactoryAddress);
-        destinationIts = IInterchainTokenService(params.destinationItsAddress);
 
         vm.startBroadcast(vm.envUint("TESTNET_PRIVATE_KEY"));
 
         address canonicalToken = deploySourceToken(params);
         bytes32 tokenId = registerAndDeployRemoteToken(canonicalToken, params);
-        performInterchainTransfer(tokenId, canonicalToken, params);
+
+        // Log important information
+        console.log("Deployment Information:");
+        console.log("Source Chain: %s", params.sourceChain);
+        console.log("Destination Chain: %s", params.destinationChain);
+        console.log("Canonical Token Address: %s", canonicalToken);
+        console.log("Token ID: %s", vm.toString(tokenId));
 
         vm.stopBroadcast();
     }
 
-    // ... (keep the rest of the functions as they are, but adjust gas values and waiting times as needed for testnet)
+    /// @notice Deploy the source token
     function deploySourceToken(
         DeploymentParams memory params
     ) internal returns (address) {
@@ -92,6 +132,7 @@ contract CanonicalTokenScript is Script {
         return address(canonicalToken);
     }
 
+    /// @notice Register and deploy the remote token
     function registerAndDeployRemoteToken(
         address canonicalToken,
         DeploymentParams memory params
@@ -115,22 +156,19 @@ contract CanonicalTokenScript is Script {
             FEE
         );
 
-        vm.warp(block.timestamp + WAIT_TIME);
-        console.log("Waited for remote deployment");
-
         return tokenId;
     }
 
-    function performInterchainTransfer(
-        bytes32 tokenId,
-        address tokenAddress,
-        DeploymentParams memory params
-    ) internal {
-        CanonicalToken token = CanonicalToken(tokenAddress);
-        uint256 transferAmount = (params.amount * TRANSFER_PERCENTAGE) / 100;
+    /// @notice Perform an interchain transfer
+    function performInterchainTransfer(TransferParams memory params) internal {
+        vm.startBroadcast(vm.envUint("TESTNET_PRIVATE_KEY"));
+
+        sourceIts = IInterchainTokenService(params.sourceItsAddress);
+        CanonicalToken token = CanonicalToken(params.canonicalTokenAddress);
+
         console.log(
             "Performing interchain transfer of %s tokens",
-            transferAmount
+            params.amount
         );
 
         uint256 balanceBeforeTransfer = token.balanceOf(params.deployer);
@@ -139,13 +177,13 @@ contract CanonicalTokenScript is Script {
             balanceBeforeTransfer
         );
 
-        token.approve(address(sourceIts), transferAmount);
+        token.approve(address(sourceIts), params.amount);
 
         sourceIts.interchainTransfer{value: FEE}(
-            tokenId,
+            params.tokenId,
             StringUtils.toTitleCase(params.destinationChain),
             abi.encodePacked(params.deployer),
-            transferAmount,
+            params.amount,
             "",
             FEE
         );
@@ -157,9 +195,11 @@ contract CanonicalTokenScript is Script {
         );
 
         require(
-            balanceAfterTransfer == balanceBeforeTransfer - transferAmount,
+            balanceAfterTransfer == balanceBeforeTransfer - params.amount,
             "Incorrect balance after transfer"
         );
         console.log("Interchain transfer completed");
+
+        vm.stopBroadcast();
     }
 }
