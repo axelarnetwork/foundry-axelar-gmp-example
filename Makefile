@@ -109,115 +109,6 @@ rpc:
 	@echo "$(CYAN)Scroll RPC URL:$(NC)" $(FANTOM_TESTNET_RPC_URL)
 	@echo "$(YELLOW)Base RPC URL:$(NC)" $(POLYGON_TESTNET_RPC_URL)
 
-# Determine the script path outside of the recipe
-ifeq ($(SCRIPT),ExecutableSample)
-SCRIPT_PATH=script/testnet/ExecutableSample.s.sol:ExecutableSampleScript
-endif
-ifeq ($(SCRIPT),DistributionExecutable)
-SCRIPT_PATH=script/testnet/DistributionExecutable.s.sol:DistributionExecutableScript
-endif
-ifeq ($(SCRIPT),SendAck)
-SCRIPT_PATH=script/testnet/SendAck.s.sol:SendAckScript
-endif
-
-# Deploy target to testnet
-deploy:
-ifndef NETWORK
-	@echo "$(RED)Error: NETWORK is undefined. Supported networks are: $(NETWORKS)$(NC)"
-	@exit 1
-endif
-ifndef SCRIPT
-	@echo "$(RED)Error: SCRIPT is undefined. Supported scripts are: $(SCRIPTS)$(NC)"
-	@exit 1
-endif
-ifneq ($(findstring $(NETWORK),$(NETWORKS)), $(NETWORK))
-	@echo "$(RED)Error: Invalid network argument passed. Supported networks are: $(NETWORKS)$(NC)"
-	@exit 1
-endif
-ifneq ($(findstring $(SCRIPT),$(SCRIPTS)), $(SCRIPT))
-	@echo "$(RED)Error: Invalid script argument passed. Supported scripts are: $(SCRIPTS)$(NC)"
-	@exit 1
-endif
-	@echo "$(YELLOW)Current NETWORK: $(NETWORK)$(NC)"
-	@NETWORK=$(NETWORK) forge script $(SCRIPT_PATH) --rpc-url $($(shell echo $(NETWORK) | tr a-z A-Z)_TESTNET_RPC_URL) --broadcast --legacy
-	@echo "$(GREEN)Script executed successfully!$(NC)"
-
-# Execute the command manually after asking for user input
-execute:
-	@echo "$(YELLOW)Please enter the details:$(NC)"; \
-	read -p "Contract Name (e.g., ExecutableSample, DistributionExecutable, SendAck): " contract_name; \
-	read -p "Source Chain Network (e.g., ethereum, avalanche, moonbeam, fantom, polygon): " network; \
-	read -p "Source chain contract address: " src_address; \
-	read -p "Destination Chain Network (e.g., ethereum-sepolia, Avalanche, Moonbeam, Fantom, Polygon): " dest_chain; \
-	read -p "Destination chain contract address: " dest_address; \
-	read -p "Value to send in ether (e.g., 0.5): " value_in_ether; \
-	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
-	if [ -z "$$value_in_wei" ]; then \
-		echo "$(RED)Failed to convert value to wei. Please enter a valid numeric value.$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ -z "$$network" ]; then \
-		echo "$(RED)Network not provided. Please enter a valid network.$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ -z "$$src_address" ]; then \
-		echo "$(RED)Source contract address not provided. Please enter a valid address.$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ -z "$$dest_chain" ]; then \
-		echo "$(RED)Destination chain not provided. Please enter a valid destination chain.$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ -z "$$dest_address" ]; then \
-		echo "$(RED)Destination contract address not provided. Please enter a valid address.$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ -z "$$value_in_ether" ]; then \
-		echo "$(RED)Value in ether not provided. Please enter a valid amount.$(NC)"; \
-		exit 1; \
-	fi; \
-	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
-	rpc_url_var=$${network_upper}_TESTNET_RPC_URL; \
-	rpc_url=$${!rpc_url_var}; \
-	if [ -z "$$rpc_url" ]; then \
-		echo "$(RED)RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
-		exit 1; \
-	fi; \
-	if [ "$$contract_name" = "DistributionExecutable" ]; then \
-		read -p "Destination addresses (comma-separated, e.g. 0x123,0x123): " dest_addresses; \
-		read -p "Token symbol to send (e.g. aUSDC): " symbol; \
-		read -p "Approved amount to spend: " approved_amount; \
-		approved_amount_in_mwei=$$(echo "scale=0; $$approved_amount*10^6/1" | bc); \
-		read -p "Amount to send: " amount; \
-		amount_in_mwei=$$(echo "scale=0; $$amount*10^6/1" | bc); \
-		dest_addrs_array="[$$(echo $$dest_addresses | sed 's/,/, /g')]"; \
-		echo "$(YELLOW)Executing transaction for DistributionExecutable...$(NC)"; \
-		cast send 0x2c852e740B62308c46DD29B982FBb650D063Bd07 "approve(address,uint256)" $$src_address $$approved_amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY && \
-		echo "$(GREEN)Approval transaction complete, now executing sendToMany...$(NC)"; \
-		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$$dest_addrs_array" $$symbol $$amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
-		echo "$(RED)Transaction failed. Please check the provided details and try again.$(NC)"; \
-	else \
-		read -p "Message to send: " message; \
-		if [ -z "$$message" ]; then \
-			echo "$(RED)Message not provided. Please enter a valid message to send.$(NC)"; \
-			exit 1; \
-		fi; \
-		echo "$(YELLOW)Executing transaction for $$contract_name...$(NC)"; \
-		method_name=""; \
-		if [ "$$contract_name" = "SendAck" ]; then \
-			method_name="sendMessage(string,string,string)"; \
-		elif [ "$$contract_name" = "ExecutableSample" ]; then \
-			method_name="setRemoteValue(string,string,string)"; \
-		fi; \
-		if [ -n "$$method_name" ]; then \
-			cast send $$src_address "$$method_name" $$dest_chain $$dest_address $$message --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
-			echo "$(RED)Transaction failed. Please check the provided details and try again.$(NC)"; \
-		else \
-			echo "$(RED)Invalid contract name. Please enter a valid contract name.$(NC)"; \
-			exit 1; \
-		fi; \
-	fi
-
 # local chain targets
 local-chain-start: clean-ports
 	@echo "$(YELLOW)Starting the local chain...$(NC)"
@@ -232,6 +123,7 @@ local-chain-start: clean-ports
 	@node env-setup/startLocalChain.js || (echo "$(RED)Error starting local chain. Cleaning up...$(NC)" && $(MAKE) clean-ports && exit 1)
 	@echo "$(GREEN)Local script executed successfully!$(NC)"
 
+# Clean up ports
 clean-ports:
 	@echo "$(YELLOW)Cleaning up ports...$(NC)"
 	@-kill $$(lsof -t -i:8545) 2>/dev/null || true
@@ -248,6 +140,7 @@ clean-ports:
 	@echo "$(GREEN)Ports cleaned up.$(NC)"
 
 
+# Deploy contracts to local chain
 local-chain-deploy:
 	@for network in $(NETWORKS); do \
 		for script in $(SCRIPTS); do \
@@ -299,7 +192,7 @@ local-chain-deploy:
 		done; \
 	done
 
-# Determine the script path outside of the recipe
+# Determine the GMP script path outside of the recipe
 ifeq ($(SCRIPT),ExecutableSample)
 LOCAL_SCRIPT_PATH=script/local/gmp/ExecutableSample.s.sol:ExecutableSampleScript
 endif
@@ -310,6 +203,7 @@ ifeq ($(SCRIPT),SendAck)
 LOCAL_SCRIPT_PATH=script/local/gmp/SendAck.s.sol:SendAckScript
 endif
 
+# Execute GMP calls on local chains
 local-chain-execute:
 	@echo "$(YELLOW)Using local private key for transactions...$(NC)"
 	@if [ -z "$(LOCAL_PRIVATE_KEY)" ]; then \
@@ -401,8 +295,8 @@ local-chain-execute:
 
 	@echo "$(GREEN)Operation completed successfully!$(NC)"
 
-# Interchain Token Service
-
+# Interchain Token Service Local Chain Deployment on Local Chains
+# Deploy New Interchain Token on Local Chains
 deploy-interchain-token:
 	@echo "$(YELLOW)Deploying Interchain Token...$(NC)"
 	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " source_chain; \
@@ -440,7 +334,7 @@ deploy-interchain-token:
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
 	@echo "$(GREEN)Interchain Token deployment and transfer completed!$(NC)"
 
-
+# Setup Token Managers and Transfer for Custom Token on Local Chains
 deploy-mint-burn-token-manager-and-transfer:
 	@echo "$(YELLOW)Setting up Token Managers...$(NC)"
 	@read -p "Enter source network (ethereum, avalanche, moonbeam, fantom, polygon): " SOURCE_NETWORK; \
@@ -480,6 +374,7 @@ deploy-mint-burn-token-manager-and-transfer:
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
 
+# Deploy Canonical Token on local chains
 deploy-canonical-token:
 	@echo "$(YELLOW)Deploying Canonical Token...$(NC)"
 	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " source_chain; \
@@ -516,3 +411,149 @@ deploy-canonical-token:
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
 	@echo "$(GREEN)Canonical Token deployment, registration, and transfer completed!$(NC)"
+
+
+# Determine the script path outside of the recipe
+ifeq ($(SCRIPT),ExecutableSample)
+SCRIPT_PATH=script/testnet/ExecutableSample.s.sol:ExecutableSampleScript
+endif
+ifeq ($(SCRIPT),DistributionExecutable)
+SCRIPT_PATH=script/testnet/DistributionExecutable.s.sol:DistributionExecutableScript
+endif
+ifeq ($(SCRIPT),SendAck)
+SCRIPT_PATH=script/testnet/SendAck.s.sol:SendAckScript
+endif
+
+# Deploy target to testnet
+deploy:
+ifndef NETWORK
+	@echo "$(RED)Error: NETWORK is undefined. Supported networks are: $(NETWORKS)$(NC)"
+	@exit 1
+endif
+ifndef SCRIPT
+	@echo "$(RED)Error: SCRIPT is undefined. Supported scripts are: $(SCRIPTS)$(NC)"
+	@exit 1
+endif
+ifneq ($(findstring $(NETWORK),$(NETWORKS)), $(NETWORK))
+	@echo "$(RED)Error: Invalid network argument passed. Supported networks are: $(NETWORKS)$(NC)"
+	@exit 1
+endif
+ifneq ($(findstring $(SCRIPT),$(SCRIPTS)), $(SCRIPT))
+	@echo "$(RED)Error: Invalid script argument passed. Supported scripts are: $(SCRIPTS)$(NC)"
+	@exit 1
+endif
+	@echo "$(YELLOW)Current NETWORK: $(NETWORK)$(NC)"
+	@NETWORK=$(NETWORK) forge script $(SCRIPT_PATH) --rpc-url $($(shell echo $(NETWORK) | tr a-z A-Z)_TESTNET_RPC_URL) --broadcast --legacy
+	@echo "$(GREEN)Script executed successfully!$(NC)"
+
+# Execute the command manually after asking for user input to tectnet
+execute-gmp-on-testnet:
+	@echo "$(YELLOW)Please enter the details:$(NC)"; \
+	read -p "Contract Name (e.g., ExecutableSample, DistributionExecutable, SendAck): " contract_name; \
+	read -p "Source Chain Network (e.g., ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Source chain contract address: " src_address; \
+	read -p "Destination Chain Network (e.g., ethereum-sepolia, Avalanche, Moonbeam, Fantom, Polygon): " dest_chain; \
+	read -p "Destination chain contract address: " dest_address; \
+	read -p "Value to send in ether (e.g., 0.5): " value_in_ether; \
+	value_in_wei=$$(echo "scale=0; $$value_in_ether*10^18/1" | bc -l); \
+	if [ -z "$$value_in_wei" ]; then \
+		echo "$(RED)Failed to convert value to wei. Please enter a valid numeric value.$(NC)"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$network" ]; then \
+		echo "$(RED)Network not provided. Please enter a valid network.$(NC)"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$src_address" ]; then \
+		echo "$(RED)Source contract address not provided. Please enter a valid address.$(NC)"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$dest_chain" ]; then \
+		echo "$(RED)Destination chain not provided. Please enter a valid destination chain.$(NC)"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$dest_address" ]; then \
+		echo "$(RED)Destination contract address not provided. Please enter a valid address.$(NC)"; \
+		exit 1; \
+	fi; \
+	if [ -z "$$value_in_ether" ]; then \
+		echo "$(RED)Value in ether not provided. Please enter a valid amount.$(NC)"; \
+		exit 1; \
+	fi; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var=$${network_upper}_TESTNET_RPC_URL; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	if [ "$$contract_name" = "DistributionExecutable" ]; then \
+		read -p "Destination addresses (comma-separated, e.g. 0x123,0x123): " dest_addresses; \
+		read -p "Token symbol to send (e.g. aUSDC): " symbol; \
+		read -p "Approved amount to spend: " approved_amount; \
+		approved_amount_in_mwei=$$(echo "scale=0; $$approved_amount*10^6/1" | bc); \
+		read -p "Amount to send: " amount; \
+		amount_in_mwei=$$(echo "scale=0; $$amount*10^6/1" | bc); \
+		dest_addrs_array="[$$(echo $$dest_addresses | sed 's/,/, /g')]"; \
+		echo "$(YELLOW)Executing transaction for DistributionExecutable...$(NC)"; \
+		cast send 0x2c852e740B62308c46DD29B982FBb650D063Bd07 "approve(address,uint256)" $$src_address $$approved_amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY && \
+		echo "$(GREEN)Approval transaction complete, now executing sendToMany...$(NC)"; \
+		cast send $$src_address "sendToMany(string,string,address[],string,uint256)" $$dest_chain $$dest_address "$$dest_addrs_array" $$symbol $$amount_in_mwei --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
+		echo "$(RED)Transaction failed. Please check the provided details and try again.$(NC)"; \
+	else \
+		read -p "Message to send: " message; \
+		if [ -z "$$message" ]; then \
+			echo "$(RED)Message not provided. Please enter a valid message to send.$(NC)"; \
+			exit 1; \
+		fi; \
+		echo "$(YELLOW)Executing transaction for $$contract_name...$(NC)"; \
+		method_name=""; \
+		if [ "$$contract_name" = "SendAck" ]; then \
+			method_name="sendMessage(string,string,string)"; \
+		elif [ "$$contract_name" = "ExecutableSample" ]; then \
+			method_name="setRemoteValue(string,string,string)"; \
+		fi; \
+		if [ -n "$$method_name" ]; then \
+			cast send $$src_address "$$method_name" $$dest_chain $$dest_address $$message --rpc-url $$rpc_url --private-key $$TESTNET_PRIVATE_KEY --value $$value_in_wei || \
+			echo "$(RED)Transaction failed. Please check the provided details and try again.$(NC)"; \
+		else \
+			echo "$(RED)Invalid contract name. Please enter a valid contract name.$(NC)"; \
+			exit 1; \
+		fi; \
+	fi
+
+# Interchain Token Service Deployment on Testnet
+# Deploy Canonical Token to testnet
+deploy-canonical-token-testnet:
+	@echo "$(YELLOW)Deploying Canonical Token to testnet...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
+	read -p "Enter token name: " token_name; \
+	read -p "Enter token symbol: " token_symbol; \
+	read -p "Enter token decimals: " token_decimals; \
+	read -p "Enter initial token amount to be minted: " token_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="$${network_upper}_TESTNET_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$dest_chain$(NC)"; \
+	echo "$(CYAN)Debug: Token Name: $$token_name$(NC)"; \
+	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
+	echo "$(CYAN)Debug: Token Decimals: $$token_decimals$(NC)"; \
+	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
+	NETWORK=$$network \
+	DESTINATION_CHAIN=$$dest_chain \
+	TOKEN_NAME=$$token_name \
+	TOKEN_SYMBOL=$$token_symbol \
+	TOKEN_DECIMALS=$$token_decimals \
+	TOKEN_AMOUNT=$$token_amount \
+	forge script script/testnet/its/CanonicalToken.s.sol:CanonicalTokenScript \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Canonical Token deployment to testnet completed!$(NC)"

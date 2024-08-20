@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
-import "../../src/call-contract-with-token/DistributionExecutable.sol";
-import "./NetworkDetailsBase.sol";
+import "../../../src/call-contract-with-token/DistributionExecutable.sol";
+import "../../testnet/NetworkDetailsBase.sol";
 
 contract DistributionExecutableScript is Script, NetworkDetailsBase {
     DistributionExecutable public distributionExecutable;
@@ -16,7 +16,10 @@ contract DistributionExecutableScript is Script, NetworkDetailsBase {
         (address gateway, address gasService) = getNetworkDetails(network);
 
         vm.startBroadcast(privateKey);
-        distributionExecutable = new DistributionExecutable(gateway, gasService);
+        distributionExecutable = new DistributionExecutable(
+            gateway,
+            gasService
+        );
         vm.stopBroadcast();
     }
 }

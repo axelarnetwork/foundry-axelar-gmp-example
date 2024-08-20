@@ -155,7 +155,7 @@ We have deployed `ExecutableSample` on `Polygon` here: [0xc399215e17114437C36BCD
 Run the following command:
 
 ```
-make execute
+make execute-gmp-on-testnet
 ```
 
 You should get the following response similar to what we have below if you are also testing with the `ExecutableSample` contract.
