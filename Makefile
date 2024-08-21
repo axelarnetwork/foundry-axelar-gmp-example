@@ -590,3 +590,136 @@ transfer-canonical-token-testnet:
 		--broadcast \
 		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
 	@echo "$(GREEN)Interchain transfer of Canonical Token completed!$(NC)"
+
+# Deploy interchain token on testnet
+deploy-interchain-token-testnet:
+	@echo "$(YELLOW)Deploying Interchain Token on testnet...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
+	read -p "Enter token name: " token_name; \
+	read -p "Enter token symbol: " token_symbol; \
+	read -p "Enter token decimals: " token_decimals; \
+	read -p "Enter initial token amount to be minted: " token_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="$${network_upper}_TESTNET_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$dest_chain$(NC)"; \
+	echo "$(CYAN)Debug: Token Name: $$token_name$(NC)"; \
+	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
+	echo "$(CYAN)Debug: Token Decimals: $$token_decimals$(NC)"; \
+	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
+	NETWORK=$$network \
+	DESTINATION_CHAIN=$$dest_chain \
+	TOKEN_NAME=$$token_name \
+	TOKEN_SYMBOL=$$token_symbol \
+	TOKEN_DECIMALS=$$token_decimals \
+	TOKEN_AMOUNT=$$token_amount \
+	forge script script/testnet/its/InterchainToken.s.sol:InterchainTokenTestnetScript --sig "deploy()" \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Interchain Token deployment completed!$(NC)"
+	@echo "$(YELLOW)Please note down the Token ID for the transfer step.$(NC)"
+
+# Perform interchain transfer of interchain token on testnet
+transfer-interchain-token-testnet:
+	@echo "$(YELLOW)Performing Interchain Transfer of Interchain Token on testnet...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
+	read -p "Enter token ID: " token_id; \
+	read -p "Enter amount to transfer: " transfer_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="$${network_upper}_TESTNET_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$dest_chain$(NC)"; \
+	echo "$(CYAN)Debug: Token ID: $$token_id$(NC)"; \
+	echo "$(CYAN)Debug: Transfer Amount: $$transfer_amount$(NC)"; \
+	NETWORK=$$network \
+	DESTINATION_CHAIN=$$dest_chain \
+	TOKEN_ID=$$token_id \
+	TOKEN_AMOUNT=$$transfer_amount \
+	forge script script/testnet/its/InterchainToken.s.sol:InterchainTokenTestnetScript --sig "transfer()" \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Interchain transfer of Interchain Token completed!$(NC)"
+
+# Deploy custom token on testnet
+deploy-custom-token-testnet:
+	@echo "$(YELLOW)Deploying Custom Token on testnet...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
+	read -p "Enter token name: " token_name; \
+	read -p "Enter token symbol: " token_symbol; \
+	read -p "Enter token decimals: " token_decimals; \
+	read -p "Enter initial token amount to be minted: " token_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="$${network_upper}_TESTNET_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$dest_chain$(NC)"; \
+	echo "$(CYAN)Debug: Token Name: $$token_name$(NC)"; \
+	echo "$(CYAN)Debug: Token Symbol: $$token_symbol$(NC)"; \
+	echo "$(CYAN)Debug: Token Decimals: $$token_decimals$(NC)"; \
+	echo "$(CYAN)Debug: Token Amount: $$token_amount$(NC)"; \
+	NETWORK=$$network \
+	DESTINATION_CHAIN=$$dest_chain \
+	TOKEN_NAME=$$token_name \
+	TOKEN_SYMBOL=$$token_symbol \
+	TOKEN_DECIMALS=$$token_decimals \
+	TOKEN_AMOUNT=$$token_amount \
+	forge script script/testnet/its/CustomToken.s.sol:CustomTokenTestnetScript --sig "deploy()" \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Custom Token deployment completed!$(NC)"
+	@echo "$(YELLOW)Please note down the Token ID and addresses for the transfer step.$(NC)"
+
+# Perform interchain transfer of custom token on testnet
+transfer-custom-token-testnet:
+	@echo "$(YELLOW)Performing Interchain Transfer of Custom Token on testnet...$(NC)"
+	@read -p "Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): " network; \
+	read -p "Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): " dest_chain; \
+	read -p "Enter token address: " token_address; \
+	read -p "Enter token ID: " token_id; \
+	read -p "Enter amount to transfer: " transfer_amount; \
+	network_upper=$$(echo $$network | tr '[:lower:]' '[:upper:]'); \
+	rpc_url_var="$${network_upper}_TESTNET_RPC_URL"; \
+	rpc_url=$${!rpc_url_var}; \
+	if [ -z "$$rpc_url" ]; then \
+		echo "$(RED)Error: RPC URL for $$network is not set in .env. Please set the RPC URL for your network.$(NC)"; \
+		exit 1; \
+	fi; \
+	echo "$(CYAN)Debug: Network: $$network$(NC)"; \
+	echo "$(CYAN)Debug: RPC URL: $$rpc_url$(NC)"; \
+	echo "$(CYAN)Debug: Destination Chain: $$dest_chain$(NC)"; \
+	echo "$(CYAN)Debug: Token Address: $$token_address$(NC)"; \
+	echo "$(CYAN)Debug: Token ID: $$token_id$(NC)"; \
+	echo "$(CYAN)Debug: Transfer Amount: $$transfer_amount$(NC)"; \
+	NETWORK=$$network \
+	DESTINATION_CHAIN=$$dest_chain \
+	CANONICAL_TOKEN_ADDRESS=$$token_address \
+	TOKEN_ID=$$token_id \
+	TOKEN_AMOUNT=$$transfer_amount \
+	forge script script/testnet/its/CustomToken.s.sol:CustomTokenTestnetScript --sig "transfer()" \
+		--rpc-url $$rpc_url \
+		--broadcast \
+		|| { echo "$(RED)Error: Forge script execution failed$(NC)"; exit 1; }
+	@echo "$(GREEN)Interchain transfer of Custom Token completed!$(NC)"
