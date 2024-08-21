@@ -1,20 +1,22 @@
 # Canonical Token Deployment Example
 
-This example demonstrates how to deploy a canonical token and transfer it between different chains.
+This example demonstrates how to deploy a canonical token and transfer it between different chains using the Axelar Interchain Token Service. The Interchain Token Service allows for seamless token transfers across multiple blockchain networks.
 
-> Make sure you follow the command above to set up your local `.env` and start the local chains in a different terminal.
+## Local
 
-**Note**: This example uses the `CanonicalToken` contract. The `CanonicalToken` contract is deployed on the source chain and registered on the destination chain.
+> Make sure to set up your local `.env` and start the local chains in a different terminal.
+
+**Note**: This example uses the `InterchainToken` contract. The `InterchainToken` contract is deployed on the source chain and the destination chain.
 
 To execute the example, use the following command:
 
-```
+```bash
 make deploy-canonical-token
 ```
 
 The command will prompt you for the following information:
 
-## Parameters
+### Parameters
 
 - `source_chain`: The blockchain network where the canonical token will be initially deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
 - `destination_chain`: The blockchain network where the token will be registered and transferred. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
@@ -23,11 +25,11 @@ The command will prompt you for the following information:
 - `token_decimals`: The number of decimal places for your token.
 - `token_amount`: The initial amount of tokens to mint.
 
-## Example
+### Example
 
 Here's an example of how you might respond to the prompts:
 
-```
+```bash
 Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): ethereum
 Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): avalanche
 Enter token name: My Canonical Token
@@ -36,17 +38,17 @@ Enter token decimals: 18
 Enter initial token amount: 1000
 ```
 
-## Process
+### Process
 
 1. The script will use the provided information to deploy the `CanonicalToken` contract on the source chain.
 2. It will then register the token with the Interchain Token Service.
 3. Finally, it will transfer the specified amount of tokens from the source chain to the destination chain.
 
-## Output
+## Local Output
 
 The output will show debug information and the progress of the deployment, registration, and transfer process. A successful execution will end with:
 
-```
+```bash
 make deploy-canonical-token
 Deploying Canonical Token...
 Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): polygon
@@ -117,3 +119,84 @@ Canonical Token deployment, registration, and transfer completed!
 ```
 
 If there are any errors during the process, they will be displayed in red.
+
+## Testnet
+
+> Make sure to set up your local `.env` file with the necessary testnet RPC URLs and your `TESTNET_PRIVATE_KEY`.
+
+To deploy, register, and transfer the Canonical Token on testnet, you'll use two separate commands: one for deployment and registration, and one for transfer.
+
+### Deploying and Registering Canonical Token on Testnet
+
+To deploy and register the Canonical Token on a testnet, use the following command:
+
+```bash
+make deploy-canonical-token-testnet
+```
+
+The command will prompt you for the following information:
+
+#### Parameters
+
+- `source_chain`: The testnet blockchain network where the token will be initially deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
+- `destination_chain`: The testnet blockchain network where the token will be registered and transferred. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
+- `token_name`: The name of the canonical token you want to create.
+- `token_symbol`: The symbol for your canonical token.
+- `token_decimals`: The number of decimal places for your token.
+- `token_amount`: The initial amount of tokens to mint.
+
+#### Example
+
+Here's an example of how you might respond to the prompts:
+
+```bash
+Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): avalanche
+Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): fantom
+Enter token name: My Testnet Canonical Token
+Enter token symbol: MTCT
+Enter token decimals: 18
+Enter initial token amount to be minted: 1000
+```
+
+After the deployment and registration are complete, the script will output important information, including the Canonical Token Address and Token ID. Make sure to note these down as you'll need them for the transfer step.
+
+**Important**: Before proceeding to the transfer step, confirm that the deployment and registration were successful by checking the transaction on [Axelar Testnet Explorer](https://testnet.axelarscan.io). Search for your transaction hash or address to verify the deployment.
+
+### Transferring Canonical Token on Testnet
+
+After confirming the successful deployment and registration, you can proceed with the transfer using the following command:
+
+```bash
+make transfer-canonical-token-testnet
+```
+
+The command will prompt you for the following information:
+
+#### Parameters
+
+- `source_chain`: The testnet blockchain network from which you want to transfer tokens.
+- `destination_chain`: The testnet blockchain network to which you want to transfer tokens.
+- `canonical_token_address`: The address of the deployed Canonical Token (noted from the deployment step).
+- `token_id`: The Token ID noted from the deployment step.
+- `transfer_amount`: The amount of tokens you want to transfer.
+
+#### Example
+
+Here's an example of how you might respond to the prompts:
+
+```bash
+Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): avalanche
+Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): fantom
+Enter canonical token address: 0x1234... # Use the actual Canonical Token Address from the deployment step
+Enter token ID: 0x5678... # Use the actual Token ID from the deployment step
+Enter amount to transfer: 500
+```
+
+### Important Notes
+
+1. Ensure you have sufficient testnet tokens (e.g., Avalanche testnet AVAX) in your wallet to cover gas fees for both deployment/registration and transfer operations.
+2. Set your `TESTNET_PRIVATE_KEY` in the `.env` file. This should be the private key of the account you're using for testnet operations.
+3. After deployment and registration, always verify the transaction on the [Axelar Testnet Explorer](https://testnet.axelarscan.io) before proceeding with the transfer.
+4. Testnet operations may take longer than local operations. Be patient and monitor the transaction status on the respective testnet explorers.
+
+If you encounter any errors during the process, they will be displayed in red. Make sure to resolve any issues before proceeding to the next step.

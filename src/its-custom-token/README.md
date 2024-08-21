@@ -1,27 +1,29 @@
 # Interchain Custom Token Example
 
-This example demonstrates how to set up token managers for a custom token and transfer it between different chains.
+This example demonstrates how to set up token managers for a custom token and transfer it between different chains using the Axelar Interchain Token Service. The Interchain Token Service allows for seamless token transfers across multiple blockchain networks.
 
-> Make sure you follow the command above to set up your local `.env` and start the local chains in a different terminal.
+## Local
 
-**Note**: This example assumes you have already deployed custom tokens on both the source and destination chains.
+> Make sure to set up your local `.env` and start the local chains in a different terminal.
+
+**Note**: This example uses the `InterchainToken` contract. The `InterchainToken` contract is deployed on the source chain and the destination chain.
 
 To execute the example, use the following command:
 
-```
+```bash
 make deploy-mint-burn-token-manager-and-transfer
 ```
 
 The command will prompt you for the following information:
 
-## Parameters
+### Parameters
 
 - `SOURCE_NETWORK`: The blockchain network where the source custom token is deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
 - `DEST_NETWORK`: The blockchain network where the destination custom token is deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
 - `MINT_AMOUNT`: The amount of tokens to mint on the source chain.
 - `TRANSFER_AMOUNT`: The amount of tokens to transfer from the source chain to the destination chain.
 
-## Example
+### Example
 
 Here's an example of how you might respond to the prompts:
 
@@ -32,20 +34,20 @@ Enter amount to mint: 1000
 Enter amount to transfer: 500
 ```
 
-## Process
+### Process
 
 1. The script will retrieve the addresses of the custom tokens from the `.env` file for both the source and destination networks.
 2. It will then set up mint/burn token managers for both the source and destination tokens.
 3. The specified amount of tokens will be approved and minted on the source chain.
 4. Finally, it will transfer the specified amount of tokens from the source chain to the destination chain.
 
-## Output
+## Local Output
 
 The output will show debug information and the progress of the token manager setup, approval minting, and transfer process. A successful execution will end with a message indicating that the Forge script execution was successful.
 
 Example output:
 
-```
+```bash
 make deploy-mint-burn-token-manager-and-transfer
 Setting up Token Managers...
 Enter source network (ethereum, avalanche, moonbeam, fantom, polygon): avalanche
@@ -136,12 +138,90 @@ Token ID: 0x67a0f8f39c9a96c943623ffde384a537aa78d0f14537b7219a56790e1270f106
 
 ##### anvil-hardhat
 ✅  [Success]Hash: 0x3aebbbeea5ee5909e657aa484746af0a1b580c36e413cae8a8146fd5ff6850fe
-
-
-
 ==========================
 
 ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
 ```
 
 If there are any errors during the process, they will be displayed in red.
+
+## Testnet
+
+> Make sure to set up your local `.env` file with the necessary testnet RPC URLs and your `TESTNET_PRIVATE_KEY`.
+
+To deploy and transfer the Custom Token on testnet, you'll use two separate commands: one for deployment and one for transfer.
+
+### Deploying Custom Token on Testnet
+
+To deploy the Custom Token on a testnet, use the following command:
+
+```bash
+make deploy-custom-token-testnet
+```
+
+The command will prompt you for the following information:
+
+#### Parameters
+
+- `source_chain`: The testnet blockchain network where the token will be initially deployed. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
+- `destination_chain`: The testnet blockchain network to which the token will be transferred. Acceptable values include "ethereum", "avalanche", "moonbeam", "fantom", and "polygon".
+- `token_name`: The name of the custom token you want to create.
+- `token_symbol`: The symbol for your custom token.
+- `token_decimals`: The number of decimal places for your token.
+- `token_amount`: The initial amount of tokens to mint.
+
+#### Example
+
+Here's an example of how you might respond to the prompts:
+
+```bash
+Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): avalanche
+Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): fantom
+Enter token name: My Testnet Custom Token
+Enter token symbol: MTCT
+Enter token decimals: 18
+Enter initial token amount to be minted: 1000
+```
+
+After the deployment is complete, the script will output important information, including the Token ID and token addresses. Make sure to note these down as you'll need them for the transfer step.
+
+**Important**: Before proceeding to the transfer step, confirm that the deployment was successful by checking the transaction on [Axelar Testnet Explorer](https://testnet.axelarscan.io). Search for your transaction hash or address to verify the deployment.
+
+### Transferring Custom Token on Testnet
+
+After confirming the successful deployment, you can proceed with the transfer using the following command:
+
+```bash
+make transfer-custom-token-testnet
+```
+
+The command will prompt you for the following information:
+
+#### Parameters
+
+- `source_chain`: The testnet blockchain network from which you want to transfer tokens.
+- `destination_chain`: The testnet blockchain network to which you want to transfer tokens.
+- `token_address`: The address of the deployed Custom Token (noted from the deployment step).
+- `token_id`: The Token ID noted from the deployment step.
+- `transfer_amount`: The amount of tokens you want to transfer.
+
+#### Example
+
+Here's an example of how you might respond to the prompts:
+
+```bash
+Enter source chain (ethereum, avalanche, moonbeam, fantom, polygon): avalanche
+Enter destination chain (ethereum, avalanche, moonbeam, fantom, polygon): fantom
+Enter token address: 0x1234... # Use the actual Token Address from the deployment step
+Enter token ID: 0x5678... # Use the actual Token ID from the deployment step
+Enter amount to transfer: 500
+```
+
+### Important Notes
+
+1. Ensure you have sufficient testnet tokens (e.g., Avalanche testnet AVAX) in your wallet to cover gas fees for both deployment and transfer operations.
+2. Set your `TESTNET_PRIVATE_KEY` in the `.env` file. This should be the private key of the account you're using for testnet operations.
+3. After deployment, always verify the transaction on the [Axelar Testnet Explorer](https://testnet.axelarscan.io) before proceeding with the transfer.
+4. Testnet operations may take longer than local operations. Be patient and monitor the transaction status on the respective testnet explorers.
+
+If you encounter any errors during the process, they will be displayed in red. Make sure to resolve any issues before proceeding to the next step.
