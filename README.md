@@ -89,8 +89,8 @@ make local-chain-deploy
 
 Additionally, we have an example using Hardhat available [here.](https://github.com/axelarnetwork/axelar-examples) Check it out.
 
-## Available Commands
 
+## Available Commands
 The repository provides a set of Makefile commands to facilitate common tasks:
 
 1. `make all`: Clean, set up the environment, install dependencies, and build the project.
@@ -103,13 +103,25 @@ The repository provides a set of Makefile commands to facilitate common tasks:
 8. `make test`: Run tests with increased verbosity.
 9. `make clean`: Clean any generated artifacts.
 10. `make rpc`: Display RPC URLs for various networks.
-11. `make deploy`: Deploy a specific contract to a given network.
-12. `make execute`: Execute a specific contract on a given network.
+11. `make deploy`: Deploy a specific contract to a given testnet.
+12. `make execute-gmp-on-testnet`: Execute GMP (General Message Passing) contracts on testnet.
 13. `make local-chain-start`: Start the local chains.
 14. `make clean-ports`: Clean up ports used by local chains.
 15. `make local-chain-deploy`: Deploy all contracts to local chains.
-16. `make local-chain-execute`: Execute commands to test GMP (General Message Passing).
-17. `make deploy-interchain-token`: Deploy an interchain token.
-18. `make deploy-mint-burn-token-manager-and-transfer`: Set up token managers and perform a transfer.
-19. `make deploy-canonical-token`: Deploy a canonical token.
-20. `make help`: Display the help menu with available commands and descriptions.
+16. `make local-chain-execute`: Execute commands to test GMP on local chains.
+
+### Interchain Token Service (ITS) commands for local chains:
+
+17. `make deploy-interchain-token`: Deploy an interchain token on local chains.
+18. `make deploy-mint-burn-token-manager-and-transfer`: Set up token managers and perform a transfer on local chains.
+19. `make deploy-canonical-token`: Deploy a canonical token on local chains.
+
+### Interchain Token Service (ITS) commands for testnet:
+20. `make deploy-canonical-token-testnet`: Deploy and register a canonical token on testnet.
+21. `make transfer-canonical-token-testnet`: Perform interchain transfer of a canonical token on testnet.
+22. `make deploy-interchain-token-testnet`: Deploy an interchain token on testnet.
+23. `make transfer-interchain-token-testnet`: Perform interchain transfer of an interchain token on testnet.
+24. `make deploy-custom-token-testnet`: Deploy a custom token on testnet.
+25. `make transfer-custom-token-testnet`: Perform interchain transfer of a custom token on testnet.
+
+26. `make help`: Display the help menu with available commands and descriptions.
