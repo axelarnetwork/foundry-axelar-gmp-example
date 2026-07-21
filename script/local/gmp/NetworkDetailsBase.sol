@@ -14,7 +14,7 @@ contract NetworkDetailsBase is Script {
 
     constructor() {
         // Initialize network details
-        networkDetails["ethereum"] = NetworkDetails(vm.envAddress("LOCAL_ETHEREUM_GATEWAY_ADDRESS"), vm.envAddress("LOCAL_ETHEREUM_GATEWAY_ADDRESS"));
+        networkDetails["ethereum"] = NetworkDetails(vm.envAddress("LOCAL_ETHEREUM_GATEWAY_ADDRESS"), vm.envAddress("LOCAL_ETHEREUM_GAS_RECEIVER_ADDRESS"));
         networkDetails["avalanche"] = NetworkDetails(vm.envAddress("LOCAL_AVALANCHE_GATEWAY_ADDRESS"), vm.envAddress("LOCAL_AVALANCHE_GAS_RECEIVER_ADDRESS"));
         networkDetails["moonbeam"] = NetworkDetails(vm.envAddress("LOCAL_MOONBEAM_GATEWAY_ADDRESS"), vm.envAddress("LOCAL_MOONBEAM_GAS_RECEIVER_ADDRESS"));
         networkDetails["fantom"] = NetworkDetails(vm.envAddress("LOCAL_FANTOM_GATEWAY_ADDRESS"), vm.envAddress("LOCAL_FANTOM_GAS_RECEIVER_ADDRESS"));
