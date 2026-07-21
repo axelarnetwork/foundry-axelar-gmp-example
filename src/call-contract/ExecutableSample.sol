@@ -43,6 +43,8 @@ contract ExecutableSample is AxelarExecutable {
         string calldata sourceAddress_,
         bytes calldata payload_
     ) internal override {
+        // Demo only — this shouldn't be used as-is in production: it does not authenticate the
+        // message source. Validate sourceChain/sourceAddress against a trusted sender before acting.
         (value) = abi.decode(payload_, (string));
         sourceChain = sourceChain_;
         sourceAddress = sourceAddress_;

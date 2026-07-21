@@ -5,8 +5,12 @@ import "@axelar-network/axelar-gmp-sdk-solidity/contracts/executable/AxelarExecu
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGateway.sol";
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol";
+import { SafeTokenTransfer, SafeTokenTransferFrom } from "@axelar-network/axelar-gmp-sdk-solidity/contracts/libs/SafeTransfer.sol";
 
 contract DistributionExecutable is AxelarExecutable {
+    using SafeTokenTransfer for IERC20;
+    using SafeTokenTransferFrom for IERC20;
+
     IAxelarGasService public immutable gasService;
 
     constructor(
@@ -37,7 +41,7 @@ contract DistributionExecutable is AxelarExecutable {
             "Insufficient allowance"
         );
 
-        IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
+        IERC20(tokenAddress).safeTransferFrom(msg.sender, address(this), amount);
         IERC20(tokenAddress).approve(address(gateway), amount);
         bytes memory payload = abi.encode(destinationAddresses);
         gasService.payNativeGasForContractCallWithToken{value: msg.value}(
@@ -65,6 +69,8 @@ contract DistributionExecutable is AxelarExecutable {
         string calldata tokenSymbol,
         uint256 amount
     ) internal override {
+        // Demo only — this shouldn't be used as-is in production: it does not authenticate the
+        // cross-chain message source. Validate sourceChain/sourceAddress against a trusted sender.
         require(amount > 0, "Amount must be greater than 0");
         address[] memory recipients = abi.decode(payload, (address[]));
         require(recipients.length > 0, "Recipients cannot be empty");
@@ -77,7 +83,7 @@ contract DistributionExecutable is AxelarExecutable {
 
         for (uint256 i = 0; i < recipients.length; i++) {
             require(recipients[i] != address(0), "Invalid recipient address");
-            IERC20(tokenAddress).transfer(recipients[i], sentAmount);
+            IERC20(tokenAddress).safeTransfer(recipients[i], sentAmount);
         }
     }
 }

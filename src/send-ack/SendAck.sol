@@ -42,6 +42,8 @@ contract ExecutableSample is AxelarExecutable {
         string calldata sourceAddress_,
         bytes calldata payload_
     ) internal override {
+        // Demo only — this shouldn't be used as-is in production: it does not authenticate the
+        // message source before acting on it and sending the acknowledgement back.
         // Decode the payload to retrieve the new message value
         (message) = abi.decode(payload_, (string));
 
