@@ -70,8 +70,12 @@ contract DistributionExecutable is AxelarExecutableWithToken {
         string calldata tokenSymbol,
         uint256 amount
     ) internal override {
-        // Demo only — this shouldn't be used as-is in production: it does not authenticate the
-        // cross-chain message source. Validate sourceChain/sourceAddress against a trusted sender.
+        // This handler is intentionally permissionless, and that is safe here: it only distributes
+        // the tokens delivered with THIS message (`amount`) among the payload-supplied recipients and
+        // holds no funds or privileged state, so a forged call can only move the caller's own
+        // delivered tokens (sentAmount * len <= amount). Authenticating the source would buy nothing.
+        // Add source authentication only when a forged message could command value or state it is not
+        // entitled to (e.g. a handler that mints, or moves a pooled/held balance).
         require(amount > 0, "Amount must be greater than 0");
         address[] memory recipients = abi.decode(payload, (address[]));
         require(recipients.length > 0, "Recipients cannot be empty");
