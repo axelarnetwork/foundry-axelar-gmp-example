@@ -21,18 +21,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install JS dependencies
-        run: pnpm install --frozen-lockfile
-
+      # forge build/test resolve Solidity from the git submodules in lib/, so no
+      # JS dependencies are needed here. The pnpm install of the axelar-local-dev
+      # harness (used only by the local-chain `make` scripts, not by forge) is
+      # deferred until axelar-local-dev v3 is published to npm — until then the
+      # lockfile pins a local file: tarball that CI cannot fetch.
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
