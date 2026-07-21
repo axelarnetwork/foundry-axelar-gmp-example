@@ -7,7 +7,7 @@ import "../../../src/send-ack/SendAck.sol";
 import "../../testnet/NetworkDetailsBase.sol";
 
 contract SendAckScript is Script, NetworkDetailsBase {
-    ExecutableSample public executableSample;
+    SendAck public executableSample;
 
     function run() public {
         uint256 privateKey = vm.envUint("TESTNET_PRIVATE_KEY");
@@ -16,7 +16,7 @@ contract SendAckScript is Script, NetworkDetailsBase {
         (address gateway, address gasService) = getNetworkDetails(network);
 
         vm.startBroadcast(privateKey);
-        executableSample = new ExecutableSample(gateway, gasService);
+        executableSample = new SendAck(gateway, gasService);
         vm.stopBroadcast();
     }
 }

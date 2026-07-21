@@ -63,11 +63,7 @@ init-submodules:
 # Install Dependencies
 install: init-submodules
 	@echo "$(YELLOW)Installing dependencies...$(NC)"
-	@forge install axelarnetwork/axelar-gmp-sdk-solidity@v5.6.4 --no-commit || true
-	@forge install openzeppelin/openzeppelin-contracts@v5.0.0 --no-commit
-	@forge install foundry-rs/forge-std@v1.7.1 --no-commit
-	@forge install axelarnetwork/interchain-token-service@v1.2.4 --no-commit
-	@npm install
+	@pnpm install
 	@echo "$(GREEN)Dependencies installed successfully!$(NC)"
 
 # Update Dependencies

@@ -7,7 +7,7 @@ import "../../../src/send-ack/SendAck.sol";
 import "./NetworkDetailsBase.sol";
 
 contract SendAckScript is Script, NetworkDetailsBase {
-    ExecutableSample public executableSample;
+    SendAck public executableSample;
 
     function run() public {
         string memory network = vm.envString("NETWORK");
@@ -26,7 +26,7 @@ contract SendAckScript is Script, NetworkDetailsBase {
         (address gateway, address gasService) = getNetworkDetails(network); 
 
         vm.startBroadcast(privateKey);
-        executableSample = new ExecutableSample(gateway, gasService);
+        executableSample = new SendAck(gateway, gasService);
         vm.stopBroadcast();
     }
 }

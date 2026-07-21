@@ -1,6 +1,10 @@
 name: test
 
-on: workflow_dispatch
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 env:
   FOUNDRY_PROFILE: ci
@@ -13,10 +17,15 @@ jobs:
     name: Foundry project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
+      # forge build/test resolve Solidity from the git submodules in lib/, so no
+      # JS dependencies are needed here. The pnpm install of the axelar-local-dev
+      # harness (used only by the local-chain `make` scripts, not by forge) is
+      # deferred until axelar-local-dev v3 is published to npm — until then the
+      # lockfile pins a local file: tarball that CI cannot fetch.
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:

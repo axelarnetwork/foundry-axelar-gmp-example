@@ -2,6 +2,8 @@
 
 This repository showcases an example of integrating with the [Axelar GMP](https://docs.axelar.dev/dev/general-message-passing/overview) using the Foundry framework. The Foundry framework aids in deploying, testing, and interacting with smart contracts on various blockchains. This example provides a hands-on approach to demonstrate the potential and flexibility of such integrations.
 
+> ⚠️ **Example code only.** These contracts are for demonstration and learning; they are intentionally minimal and omit production concerns — notably, the receive handlers do **not** authenticate the source (`sourceChain`/`sourceAddress`) of incoming cross-chain messages. Do not deploy as-is or fork as a production template. Review in full, add the safeguards your use case needs, and get an independent security audit. Roll out progressively: test on testnet first, then on mainnet start with small-value transfers before scaling up.
+
 In this example, the supported testnet networks are
 
 - Ethereum
