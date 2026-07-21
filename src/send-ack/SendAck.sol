@@ -6,7 +6,7 @@ import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGate
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IAxelarGasService.sol";
 import "@axelar-network/axelar-gmp-sdk-solidity/contracts/interfaces/IERC20.sol";
 
-contract ExecutableSample is AxelarExecutable {
+contract SendAck is AxelarExecutable {
     string public message;
     IAxelarGasService public immutable gasService;
 
