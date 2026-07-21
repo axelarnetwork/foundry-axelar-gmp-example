@@ -1,6 +1,10 @@
 name: test
 
-on: workflow_dispatch
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 env:
   FOUNDRY_PROFILE: ci
@@ -13,9 +17,21 @@ jobs:
     name: Foundry project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install JS dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
