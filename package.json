@@ -1,22 +1,13 @@
 {
+  "type": "module",
+  "packageManager": "pnpm@11.5.2+sha512.71c631e382066efc25625d5cf029075de07b61b37f6e27350fbd84b1bda5864c8c1967adc280776b45c30a715c0359a3be08fef42d5bb09e2b99029979692916",
   "devDependencies": {
     "@nomicfoundation/hardhat-foundry": "^1.1.1",
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
-    "hardhat": "^2.9.9"
+    "hardhat": "^2.22.0"
   },
-  "type": "module",
   "dependencies": {
-    "@axelar-network/axelar-chains-config": "^0.1.0",
-    "@axelar-network/axelar-gmp-sdk-solidity": "5.6.2",
-    "@axelar-network/axelar-local-dev": "^2.3.3",
-    "@axelar-network/axelarjs-sdk": "^0.13.9",
-    "@openzeppelin/contracts": "^4.5.0",
-    "axios": "^0.27.2",
-    "bech32": "^2.0.0",
-    "bip39": "^3.0.4",
-    "config": "^3.3.9",
-    "dotenv": "^16.0.2",
-    "ethers": "^5.6.2",
-    "uuid": "^8.3.2"
+    "@axelar-network/axelar-local-dev": "file:../axelar-local-dev/packages/axelar-local-dev/axelar-network-axelar-local-dev-3.0.0.tgz",
+    "ethers": "^5.6.2"
   }
 }
